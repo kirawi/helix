@@ -131,7 +131,7 @@ jobs:
       - name: Calculate tag name
         run: |
           name=nightly
-          if [[ ${{ github.event_name }} == 'workflow_dispatch' ]] then
+          if [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
             name=${{ github.event.inputs.tagname }}
           elif [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
