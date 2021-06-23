@@ -84,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="keymap.html"><strong aria-hidden="true">3.1.</strong> Keymap</a></li><li class="chapter-item expanded "><a href="hooks.html"><strong aria-hidden="true">3.2.</strong> Hooks</a></li></ol></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="themes.html"><strong aria-hidden="true">3.1.</strong> Themes</a></li><li class="chapter-item expanded "><a href="keymap.html"><strong aria-hidden="true">3.2.</strong> Keymap</a></li><li class="chapter-item expanded "><a href="remapping.html"><strong aria-hidden="true">3.3.</strong> Key Remapping</a></li><li class="chapter-item expanded "><a href="hooks.html"><strong aria-hidden="true">3.4.</strong> Hooks</a></li></ol></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -147,9 +147,12 @@
                     <main>
                         <h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
 <p>We provide pre-built binaries on the <a href="https://github.com/helix-editor/helix/releases">GitHub Releases page</a>.</p>
+<p><a href="https://repology.org/project/helix/versions"><img src="https://repology.org/badge/vertical-allrepos/helix.svg" alt="Packaging status" /></a></p>
 <h2 id="osx"><a class="header" href="#osx">OSX</a></h2>
-<p>TODO: brew tap</p>
-<p>Please use a pre-built binary release for the time being.</p>
+<p>A Homebrew tap is available:</p>
+<pre><code>brew tap helix-editor/helix
+brew install helix
+</code></pre>
 <h2 id="linux"><a class="header" href="#linux">Linux</a></h2>
 <h3 id="nixos"><a class="header" href="#nixos">NixOS</a></h3>
 <p>A <a href="https://nixos.wiki/wiki/Flakes">flake</a> containing the package is available in
@@ -170,6 +173,10 @@ cargo install --path helix-term
 <p>Now copy the <code>runtime/</code> directory somewhere. Helix will by default look for the
 runtime inside the same folder as the executable, but that can be overriden via
 the <code>HELIX_RUNTIME</code> environment variable.</p>
+<p>If you want to embed the <code>runtime/</code> directory into the Helix binary you can build
+it with:</p>
+<pre><code>cargo install --path helix-term --features &quot;embed_runtime&quot;
+</code></pre>
 
                     </main>
 
