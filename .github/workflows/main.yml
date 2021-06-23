@@ -133,7 +133,7 @@ jobs:
           name=nightly
           if [[ ${{ github.event_name }} == 'workflow_dispatch' ]] then
             name=${{ github.event.inputs.tagname }}
-          eles if [[ $GITHUB_REF == refs/tags/v* ]]; then
+          elif [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
           echo ::set-output name=val::$name
