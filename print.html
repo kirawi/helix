@@ -204,7 +204,7 @@ helix. The keymappings have been inspired from <a href="https://github.com/macha
 </ul>
 <p><code>ms</code> acts on a selection, so select the text first and use <code>ms&lt;char&gt;</code>. <code>mr</code> and <code>md</code> work
 on the closest pairs found and selections are not required; use counts to act in outer pairs.</p>
-<p>It can also act on multiple seletions (yay!). For example, to change every occurance of <code>(use)</code> to <code>[use]</code>:</p>
+<p>It can also act on multiple selections (yay!). For example, to change every occurrence of <code>(use)</code> to <code>[use]</code>:</p>
 <ul>
 <li><code>%</code> to select the whole file</li>
 <li><code>s</code> to split the selections on a search term</li>
@@ -257,6 +257,7 @@ currently have the query file implemented. Contributions are welcome !</p>
 <tr><td><code>f</code></td><td>Find next char</td><td><code>find_next_char</code></td></tr>
 <tr><td><code>T</code></td><td>Find 'till previous char</td><td><code>till_prev_char</code></td></tr>
 <tr><td><code>F</code></td><td>Find previous char</td><td><code>find_prev_char</code></td></tr>
+<tr><td><code>G</code></td><td>Go to line number <code>&lt;n&gt;</code></td><td><code>goto_line</code></td></tr>
 <tr><td><code>Alt-.</code></td><td>Repeat last motion (<code>f</code>, <code>t</code> or <code>m</code>)</td><td><code>repeat_last_motion</code></td></tr>
 <tr><td><code>Home</code></td><td>Move to the start of the line</td><td><code>goto_line_start</code></td></tr>
 <tr><td><code>End</code></td><td>Move to the end of the line</td><td><code>goto_line_end</code></td></tr>
@@ -343,6 +344,10 @@ currently have the query file implemented. Contributions are welcome !</p>
 <tr><td><code>Alt-K</code></td><td>Remove selections matching the regex</td><td><code>remove_selections</code></td></tr>
 <tr><td><code>$</code></td><td>Pipe each selection into shell command, keep selections where command returned 0</td><td><code>shell_keep_pipe</code></td></tr>
 <tr><td><code>Ctrl-c</code></td><td>Comment/uncomment the selections</td><td><code>toggle_comments</code></td></tr>
+<tr><td><code>Alt-k</code></td><td>Expand selection to parent syntax node</td><td><code>expand_selection</code></td></tr>
+<tr><td><code>Alt-j</code></td><td>Shrink syntax tree object selection</td><td><code>shrink_selection</code></td></tr>
+<tr><td><code>Alt-h</code></td><td>Select previous sibling node in syntax tree</td><td><code>select_prev_sibling</code></td></tr>
+<tr><td><code>Alt-l</code></td><td>Select next sibling node in syntax tree</td><td><code>select_next_sibling</code></td></tr>
 </tbody></table>
 <h3 id="search"><a class="header" href="#search">Search</a></h3>
 <table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
@@ -458,8 +463,6 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 <tr><td><code>]D</code></td><td>Go to last diagnostic in document (<strong>LSP</strong>)</td><td><code>goto_last_diag</code></td></tr>
 <tr><td><code>[space</code></td><td>Add newline above</td><td><code>add_newline_above</code></td></tr>
 <tr><td><code>]space</code></td><td>Add newline below</td><td><code>add_newline_below</code></td></tr>
-<tr><td><code>]o</code></td><td>Expand syntax tree object selection.</td><td><code>expand_selection</code></td></tr>
-<tr><td><code>[o</code></td><td>Shrink syntax tree object selection.</td><td><code>shrink_selection</code></td></tr>
 </tbody></table>
 <h2 id="insert-mode"><a class="header" href="#insert-mode">Insert Mode</a></h2>
 <table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
@@ -570,6 +573,7 @@ implemented for all movement commands yet.</p>
 <tr><td><code>:set-option</code>, <code>:set</code></td><td>Set a config option at runtime</td></tr>
 <tr><td><code>:sort</code></td><td>Sort ranges in selection.</td></tr>
 <tr><td><code>:rsort</code></td><td>Sort ranges in selection in reverse order.</td></tr>
+<tr><td><code>:tree-sitter-subtree</code>, <code>:ts-subtree</code></td><td>Display tree sitter subtree under cursor, primarily for debugging queries.</td></tr>
 </tbody></table>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="language-support"><a class="header" href="#language-support">Language Support</a></h1>
 <p>For more information like arguments passed to default LSP server,
@@ -587,6 +591,7 @@ specific indent settings, etc see the default
 <tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
 <tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
 <tr><td>elixir</td><td>✓</td><td></td><td></td><td><code>elixir-ls</code></td></tr>
+<tr><td>elm</td><td>✓</td><td></td><td></td><td><code>elm-language-server</code></td></tr>
 <tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>git-commit</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>git-config</td><td>✓</td><td></td><td></td><td></td></tr>
@@ -594,12 +599,15 @@ specific indent settings, etc see the default
 <tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>glsl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td><code>gopls</code></td></tr>
+<tr><td>graphql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>haskell</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>html</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>java</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>javascript</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
 <tr><td>json</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>julia</td><td>✓</td><td></td><td></td><td><code>julia</code></td></tr>
 <tr><td>latex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>lean</td><td>✓</td><td></td><td></td><td><code>lean</code></td></tr>
 <tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
