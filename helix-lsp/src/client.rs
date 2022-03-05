@@ -3,7 +3,8 @@ use crate::{
     Call, Error, OffsetEncoding, Result,
 };
 
-use helix_core::{find_root, ChangeSet, Rope};
+use helix_core::{ChangeSet, Rope};
+use helix_loader::find_root;
 use jsonrpc_core as jsonrpc;
 use lsp_types as lsp;
 use serde_json::Value;

@@ -7,7 +7,7 @@ pub use lsp::*;
 pub use typed::*;
 
 use helix_core::{
-    comment, coords_at_pos, find_first_non_whitespace_char, find_root, graphemes,
+    comment, coords_at_pos, find_first_non_whitespace_char, graphemes,
     history::UndoKind,
     increment::date_time::DateTimeIncrementor,
     increment::{number::NumberIncrementor, Increment},
@@ -24,6 +24,9 @@ use helix_core::{
     LineEnding, Position, Range, Rope, RopeGraphemes, RopeSlice, Selection, SmallVec, Tendril,
     Transaction,
 };
+
+use helix_loader::find_root;
+
 use helix_view::{
     clipboard::ClipboardType,
     document::{Mode, SCRATCH_BUFFER_NAME},

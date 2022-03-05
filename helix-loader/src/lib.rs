@@ -64,20 +64,80 @@ pub fn default_lang_config() -> toml::Value {
 
 /// User configured languages.toml file, merged with the default config.
 pub fn user_lang_config() -> Result<toml::Value, toml::de::Error> {
-    let def_lang_conf = default_lang_config();
-    let data = std::fs::read(crate::config_dir().join("languages.toml"));
-    let user_lang_conf = match data {
-        Ok(raw) => {
-            let value = toml::from_slice(&raw)?;
-            merge_toml_values(def_lang_conf, value)
-        }
-        Err(_) => def_lang_conf,
-    };
+    let config = local_config_dirs()
+        .into_iter()
+        .chain([crate::config_dir()].into_iter())
+        .map(|path| path.join("languages.toml"))
+        .filter_map(|file| {
+            std::fs::read(&file)
+                .map(|config| toml::from_slice(&config))
+                .ok()
+        })
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .chain([default_lang_config()].into_iter())
+        .fold(toml::Value::Table(toml::value::Table::default()), |a, b| {
+            merge_toml_values(b, a)
+        });
 
-    Ok(user_lang_conf)
+    Ok(config)
 }
 
-// right overrides left
+pub fn local_config_dirs() -> Vec<std::path::PathBuf> {
+    let directories = find_root_impl(None, &[".helix".to_string()])
+        .into_iter()
+        .map(|path| path.join(".helix"))
+        .collect();
+    log::debug!("Located configuration folders: {:?}", directories);
+    directories
+}
+
+/// Find project root.
+///
+/// Order of detection:
+/// * Top-most folder containing a root marker in current git repository
+/// * Git repostory root if no marker detected
+/// * Top-most folder containing a root marker if not git repository detected
+/// * Current working directory as fallback
+pub fn find_root(root: Option<&str>, root_markers: &[String]) -> Option<std::path::PathBuf> {
+    find_root_impl(root, root_markers).first().cloned()
+}
+
+fn find_root_impl(root: Option<&str>, root_markers: &[String]) -> Vec<std::path::PathBuf> {
+    let current_dir = std::env::current_dir().expect("unable to determine current directory");
+    let mut directories = Vec::new();
+
+    let root = match root {
+        Some(root) => {
+            let root = std::path::Path::new(root);
+            if root.is_absolute() {
+                root.to_path_buf()
+            } else {
+                current_dir.join(root)
+            }
+        }
+        None => current_dir,
+    };
+
+    for ancestor in root.ancestors() {
+        // don't go higher than repo
+        if ancestor.join(".git").is_dir() {
+            // Use workspace if detected from marker
+            directories.push(ancestor.to_path_buf());
+            break;
+        }
+
+        for marker in root_markers {
+            if ancestor.join(marker).exists() {
+                directories.push(ancestor.to_path_buf());
+                break;
+            }
+        }
+    }
+    directories
+}
+
+/// right overrides left
 pub fn merge_toml_values(left: toml::Value, right: toml::Value) -> toml::Value {
     use toml::Value;
 
