@@ -1,8 +1,6 @@
-use anyhow::{Context, Error, Result};
+use anyhow::{Context, Result};
 use helix_term::application::Application;
 use helix_term::args::Args;
-use helix_term::config::Config;
-use helix_term::keymap::merge_keys;
 use std::path::PathBuf;
 
 fn setup_logging(logpath: PathBuf, verbosity: u64) -> Result<()> {
@@ -89,54 +87,10 @@ FLAGS:
         std::process::exit(0);
     }
 
-    if args.health {
-        if let Some(lang) = args.health_arg {
-            match lang.as_str() {
-                "all" => helix_term::health::languages_all(),
-                _ => helix_term::health::language(lang),
-            }
-        } else {
-            helix_term::health::general();
-            println!();
-            helix_term::health::languages_all();
-        }
-        std::process::exit(0);
-    }
-
-    if args.fetch_grammars {
-        helix_loader::grammar::fetch_grammars()?;
-        return Ok(0);
-    }
-
-    if args.build_grammars {
-        helix_loader::grammar::build_grammars()?;
-        return Ok(0);
-    }
-
-    let conf_dir = helix_loader::config_dir();
-    if !conf_dir.exists() {
-        std::fs::create_dir_all(&conf_dir).ok();
-    }
-
-    let config = match std::fs::read_to_string(helix_loader::config_file()) {
-        Ok(config) => toml::from_str(&config)
-            .map(merge_keys)
-            .unwrap_or_else(|err| {
-                eprintln!("Bad config: {}", err);
-                eprintln!("Press <ENTER> to continue with default config");
-                use std::io::Read;
-                // This waits for an enter press.
-                let _ = std::io::stdin().read(&mut []);
-                Config::default()
-            }),
-        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Config::default(),
-        Err(err) => return Err(Error::new(err)),
-    };
-
     setup_logging(logpath, args.verbosity).context("failed to initialize logging")?;
 
     // TODO: use the thread local executor to spawn the application task separately from the work pool
-    let mut app = Application::new(args, config).context("unable to create new application")?;
+    let mut app = Application::new(args).context("unable to create new application")?;
 
     let exit_code = app.run().await?;
 

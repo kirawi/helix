@@ -56,13 +56,33 @@ pub struct Application {
 }
 
 impl Application {
-    pub fn new(args: Args, mut config: Config) -> Result<Self, Error> {
+    pub fn new(args: Args) -> Result<Self, Error> {
         use helix_view::editor::Action;
 
-        let conf_dir = helix_loader::config_dir();
+        let config_dir = helix_loader::config_dir();
+        if !config_dir.exists() {
+            std::fs::create_dir_all(&config_dir).ok();
+        }
 
-        let theme_loader =
-            std::sync::Arc::new(theme::Loader::new(&conf_dir, &helix_loader::runtime_dir()));
+        let mut config = match std::fs::read_to_string(config_dir.join("config.toml")) {
+            Ok(config) => toml::from_str(&config)
+                .map(crate::keymap::merge_keys)
+                .unwrap_or_else(|err| {
+                    eprintln!("Bad config: {}", err);
+                    eprintln!("Press <ENTER> to continue with default config");
+                    use std::io::Read;
+                    // This waits for an enter press.
+                    let _ = std::io::stdin().read(&mut []);
+                    Config::default()
+                }),
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => Config::default(),
+            Err(err) => return Err(Error::new(err)),
+        };
+
+        let theme_loader = std::sync::Arc::new(theme::Loader::new(
+            &config_dir,
+            &helix_loader::runtime_dir(),
+        ));
 
         let true_color = config.editor.true_color || crate::true_color();
         let theme = config
@@ -113,7 +133,7 @@ impl Application {
             // Unset path to prevent accidentally saving to the original tutor file.
             doc_mut!(editor).set_path(None)?;
         } else if args.edit_config {
-            let path = conf_dir.join("config.toml");
+            let path = config_dir.join("config.toml");
             editor.open(path, Action::VerticalSplit)?;
         } else if !args.files.is_empty() {
             let first = &args.files[0].0; // we know it's not empty
