@@ -11,6 +11,7 @@
 - [Configuration](./configuration.md)
   - [Themes](./themes.md)
   - [Key Remapping](./remapping.md)
+  - [Hooks](./hooks.md)
   - [Languages](./languages.md)
 - [Guides](./guides/README.md)
   - [Adding Languages](./guides/adding_languages.md)
