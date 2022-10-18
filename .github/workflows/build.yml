@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - test
   schedule:
     - cron: '00 01 * * *'
 
@@ -38,6 +38,7 @@ jobs:
   test:
     name: Test Suite
     runs-on: ${{ matrix.os }}
+    allow_failure: trues
     env:
       RUST_BACKTRACE: 1
       HELIX_LOG_LEVEL: debug
