@@ -10,6 +10,7 @@ mod picker;
 pub mod popup;
 mod prompt;
 mod spinner;
+mod state;
 mod statusline;
 mod text;
 
