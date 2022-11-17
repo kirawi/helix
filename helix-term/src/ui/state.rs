@@ -6,6 +6,10 @@ use tui::buffer::Buffer as Surface;
 // Represent spans w/ a graph, or vec?
 pub struct State {}
 
+// Internally used to generate e.g. indent lines. Not needed, but I think it
+// makes things more explicit.
+enum RenderEvent {}
+
 pub fn render_text_highlights<H: Iterator<Item = HighlightEvent>>(
     doc: &Document,
     offset: Position,
