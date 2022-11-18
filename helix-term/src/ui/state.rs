@@ -10,6 +10,30 @@ pub struct State {}
 // makes things more explicit.
 enum RenderEvent {}
 
+impl State {
+    /// INFO: This function will iterate over the graphemes of each span and create a set of
+    /// characters to insert at the correct location.    
+    pub fn indent_guides(&mut self) {
+        todo!();
+    }
+
+    /// INFO: This function will generate a set of render events. At the end, these events are
+    /// processed to actually draw to the screen.
+    ///
+    /// e.g.
+    /// ```
+    /// fn main() {
+    ///     println!("Hello!");
+    /// }
+    /// ```  
+    /// The events will return events to print the graphemes for the first line, print all the graphemes for the second line,
+    /// replace the first grapheme of the previous event with an indent-guide symbol, and print all he grapheme sfor the last line.
+    /// At the end, these events are merged and then applied to the Surface.
+    fn draw(&mut self) {
+        self.indent_guides();
+    }
+}
+
 pub fn render_text_highlights<H: Iterator<Item = HighlightEvent>>(
     doc: &Document,
     offset: Position,
