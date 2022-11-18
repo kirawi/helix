@@ -4,6 +4,7 @@ use helix_view::{graphics::Rect, Document, Theme};
 use tui::buffer::Buffer as Surface;
 
 // Represent spans w/ a graph, or vec?
+// Or use tui::Cell?
 pub struct State {}
 
 // Internally used to generate e.g. indent lines. Not needed, but I think it
@@ -14,6 +15,11 @@ impl State {
     /// INFO: This function will iterate over the graphemes of each span and create a set of
     /// characters to insert at the correct location.    
     pub fn indent_guides(&mut self) {
+        todo!();
+    }
+
+    /// INFO: This function will insert a set of rendering events for the text.
+    pub fn push(&mut self) {
         todo!();
     }
 
