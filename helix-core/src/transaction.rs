@@ -412,6 +412,7 @@ impl ChangeSet {
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Transaction {
     changes: ChangeSet,
+    deletions: Vec<Tendril>,
     selection: Option<Selection>,
 }
 
