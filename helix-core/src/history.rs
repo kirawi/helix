@@ -59,10 +59,16 @@ struct Revision {
     parent: usize,
     last_child: Option<NonZeroUsize>,
     transaction: Transaction,
-    // We need an inversion for undos because delete transactions don't store
-    // the deleted text.
-    inversion: Transaction,
+    inverse_selection: Option<Selection>,
     timestamp: Instant,
+}
+
+impl Revision {
+    fn inversion(&self) -> Transaction {
+        self.transaction
+            .inverse()
+            .with_selection(self.inverse_selection)
+    }
 }
 
 impl Default for History {
@@ -73,7 +79,7 @@ impl Default for History {
                 parent: 0,
                 last_child: None,
                 transaction: Transaction::from(ChangeSet::new(&Rope::new())),
-                inversion: Transaction::from(ChangeSet::new(&Rope::new())),
+                inverse_selection: None,
                 timestamp: Instant::now(),
             }],
             current: 0,
@@ -82,28 +88,23 @@ impl Default for History {
 }
 
 impl History {
-    pub fn commit_revision(&mut self, transaction: &Transaction, original: &State) {
-        self.commit_revision_at_timestamp(transaction, original, Instant::now());
+    pub fn commit_revision(&mut self, transaction: &Transaction, inverse_selection: Selection) {
+        self.commit_revision_at_timestamp(transaction, inverse_selection, Instant::now());
     }
 
     pub fn commit_revision_at_timestamp(
         &mut self,
         transaction: &Transaction,
-        original: &State,
+        inverse_selection: Selection,
         timestamp: Instant,
     ) {
-        let inversion = transaction
-            .invert(&original.doc)
-            // Store the current cursor position
-            .with_selection(original.selection.clone());
-
         let new_current = self.revisions.len();
         self.revisions[self.current].last_child = NonZeroUsize::new(new_current);
         self.revisions.push(Revision {
             parent: self.current,
             last_child: None,
             transaction: transaction.clone(),
-            inversion,
+            inverse_selection: Some(inverse_selection),
             timestamp,
         });
         self.current = new_current;
@@ -128,7 +129,7 @@ impl History {
         let up_txns = up
             .iter()
             .rev()
-            .map(|&n| self.revisions[n].inversion.clone());
+            .map(|&n| self.revisions[n].inversion().clone());
         let down_txns = down.iter().map(|&n| self.revisions[n].transaction.clone());
 
         down_txns.chain(up_txns).reduce(|acc, tx| tx.compose(acc))

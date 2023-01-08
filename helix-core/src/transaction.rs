@@ -24,6 +24,7 @@ pub enum Assoc {
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ChangeSet {
     pub(crate) changes: Vec<Operation>,
+    deletions: Vec<Tendril>,
     /// The required document length. Will refuse to apply changes unless it matches.
     len: usize,
     len_after: usize,
@@ -33,6 +34,7 @@ impl ChangeSet {
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             changes: Vec::with_capacity(capacity),
+            deletions: Vec::new(),
             len: 0,
             len_after: 0,
         }
@@ -43,6 +45,7 @@ impl ChangeSet {
         let len = doc.len_chars();
         Self {
             changes: Vec::new(),
+            deletions: Vec::new(),
             len,
             len_after: len,
         }
@@ -261,11 +264,9 @@ impl ChangeSet {
 
     /// Returns a new changeset that reverts this one. Useful for `undo` implementation.
     /// The document parameter expects the original document before this change was applied.
-    pub fn invert(&self, original_doc: &Rope) -> Self {
-        assert!(original_doc.len_chars() == self.len);
-
+    pub fn invert(&self) -> Self {
         let mut changes = Self::with_capacity(self.changes.len());
-
+        let mut deletions = self.deletions.into_iter();
         let mut pos = 0;
 
         for change in &self.changes {
@@ -276,8 +277,7 @@ impl ChangeSet {
                     pos += n;
                 }
                 Delete(n) => {
-                    let text = Cow::from(original_doc.slice(pos..pos + *n));
-                    changes.insert(Tendril::from(text.as_ref()));
+                    changes.insert(deletions.next().unwrap().clone());
                     pos += n;
                 }
                 Insert(s) => {
@@ -412,7 +412,6 @@ impl ChangeSet {
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Transaction {
     changes: ChangeSet,
-    deletions: Vec<Tendril>,
     selection: Option<Selection>,
 }
 
@@ -446,8 +445,8 @@ impl Transaction {
     }
 
     /// Generate a transaction that reverts this one.
-    pub fn invert(&self, original: &Rope) -> Self {
-        let changes = self.changes.invert(original);
+    pub fn invert(&self) -> Self {
+        let changes = self.changes.invert();
 
         Self {
             changes,
