@@ -59,15 +59,15 @@ struct Revision {
     parent: usize,
     last_child: Option<NonZeroUsize>,
     transaction: Transaction,
-    inverse_selection: Option<Selection>,
+    inverse_selection: Selection,
     timestamp: Instant,
 }
 
 impl Revision {
     fn inversion(&self) -> Transaction {
         self.transaction
-            .inverse()
-            .with_selection(self.inverse_selection)
+            .invert()
+            .with_selection(self.inverse_selection.clone())
     }
 }
 
@@ -79,7 +79,7 @@ impl Default for History {
                 parent: 0,
                 last_child: None,
                 transaction: Transaction::from(ChangeSet::new(&Rope::new())),
-                inverse_selection: None,
+                inverse_selection: Selection::point(0),
                 timestamp: Instant::now(),
             }],
             current: 0,
@@ -104,7 +104,7 @@ impl History {
             parent: self.current,
             last_child: None,
             transaction: transaction.clone(),
-            inverse_selection: Some(inverse_selection),
+            inverse_selection,
             timestamp,
         });
         self.current = new_current;
@@ -136,14 +136,14 @@ impl History {
     }
 
     /// Undo the last edit.
-    pub fn undo(&mut self) -> Option<&Transaction> {
+    pub fn undo(&mut self) -> Option<Transaction> {
         if self.at_root() {
             return None;
         }
 
         let current_revision = &self.revisions[self.current];
         self.current = current_revision.parent;
-        Some(&current_revision.inversion)
+        Some(current_revision.inversion())
     }
 
     /// Redo the last edit.
@@ -162,7 +162,7 @@ impl History {
         }
         let current_revision = &self.revisions[self.current];
         let primary_selection = current_revision
-            .inversion
+            .inversion()
             .selection()
             .expect("inversion always contains a selection")
             .primary();
@@ -216,7 +216,7 @@ impl History {
         let up = self.path_up(self.current, lca);
         let down = self.path_up(to, lca);
         self.current = to;
-        let up_txns = up.iter().map(|&n| self.revisions[n].inversion.clone());
+        let up_txns = up.iter().map(|&n| self.revisions[n].inversion());
         let down_txns = down
             .iter()
             .rev()
@@ -403,7 +403,7 @@ mod test {
             Transaction::change(&state.doc, vec![(5, 5, Some(" world!".into()))].into_iter());
 
         // Need to commit before applying!
-        history.commit_revision(&transaction1, &state);
+        history.commit_revision(&transaction1, state.selection);
         transaction1.apply(&mut state.doc);
         assert_eq!("hello world!", state.doc);
 
@@ -413,7 +413,7 @@ mod test {
             Transaction::change(&state.doc, vec![(6, 11, Some("世界".into()))].into_iter());
 
         // Need to commit before applying!
-        history.commit_revision(&transaction2, &state);
+        history.commit_revision(&transaction2, state.selection);
         transaction2.apply(&mut state.doc);
         assert_eq!("hello 世界!", state.doc);
 
@@ -478,7 +478,7 @@ mod test {
             instant: Instant,
         ) {
             let txn = Transaction::change(&state.doc, vec![change].into_iter());
-            history.commit_revision_at_timestamp(&txn, state, instant);
+            history.commit_revision_at_timestamp(&txn, state.selection, instant);
             txn.apply(&mut state.doc);
         }
 

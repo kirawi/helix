@@ -266,7 +266,7 @@ impl ChangeSet {
     /// The document parameter expects the original document before this change was applied.
     pub fn invert(&self) -> Self {
         let mut changes = Self::with_capacity(self.changes.len());
-        let mut deletions = self.deletions.into_iter();
+        let mut deletions = self.deletions.as_slice().into_iter();
         let mut pos = 0;
 
         for change in &self.changes {
