@@ -1,6 +1,7 @@
 use crate::{Assoc, ChangeSet, Range, Rope, Selection, Transaction};
 use once_cell::sync::Lazy;
 use regex::Regex;
+use std::borrow::Cow;
 use std::num::NonZeroUsize;
 use std::time::{Duration, Instant};
 
@@ -136,23 +137,23 @@ impl History {
     }
 
     /// Undo the last edit.
-    pub fn undo(&mut self) -> Option<Transaction> {
+    pub fn undo(&mut self) -> Option<Cow<Transaction>> {
         if self.at_root() {
             return None;
         }
 
         let current_revision = &self.revisions[self.current];
         self.current = current_revision.parent;
-        Some(current_revision.inversion())
+        Some(Cow::Owned(current_revision.inversion()))
     }
 
     /// Redo the last edit.
-    pub fn redo(&mut self) -> Option<&Transaction> {
+    pub fn redo(&mut self) -> Option<Cow<Transaction>> {
         let current_revision = &self.revisions[self.current];
         let last_child = current_revision.last_child?;
         self.current = last_child.get();
 
-        Some(&self.revisions[last_child.get()].transaction)
+        Some(Cow::Borrowed(&self.revisions[last_child.get()].transaction))
     }
 
     // Get the position of last change
@@ -403,7 +404,7 @@ mod test {
             Transaction::change(&state.doc, vec![(5, 5, Some(" world!".into()))].into_iter());
 
         // Need to commit before applying!
-        history.commit_revision(&transaction1, state.selection);
+        history.commit_revision(&transaction1, state.selection.clone());
         transaction1.apply(&mut state.doc);
         assert_eq!("hello world!", state.doc);
 
@@ -413,7 +414,7 @@ mod test {
             Transaction::change(&state.doc, vec![(6, 11, Some("世界".into()))].into_iter());
 
         // Need to commit before applying!
-        history.commit_revision(&transaction2, state.selection);
+        history.commit_revision(&transaction2, state.selection.clone());
         transaction2.apply(&mut state.doc);
         assert_eq!("hello 世界!", state.doc);
 
@@ -478,7 +479,7 @@ mod test {
             instant: Instant,
         ) {
             let txn = Transaction::change(&state.doc, vec![change].into_iter());
-            history.commit_revision_at_timestamp(&txn, state.selection, instant);
+            history.commit_revision_at_timestamp(&txn, state.selection.clone(), instant);
             txn.apply(&mut state.doc);
         }
 

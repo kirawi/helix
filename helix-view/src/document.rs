@@ -810,7 +810,7 @@ impl Document {
             // generate revert to savepoint
             if self.savepoint.is_some() {
                 take_with(&mut self.savepoint, |prev_revert| {
-                    let revert = transaction.invert(&old_doc);
+                    let revert = transaction.invert();
                     Some(revert.compose(prev_revert.unwrap()))
                 });
             }
@@ -880,7 +880,7 @@ impl Document {
         let mut history = self.history.take();
         let txn = if undo { history.undo() } else { history.redo() };
         let success = if let Some(txn) = txn {
-            self.apply_impl(txn, view.id)
+            self.apply_impl(txn.as_ref(), view.id)
         } else {
             false
         };
@@ -963,7 +963,7 @@ impl Document {
         let old_state = self.old_state.take().expect("no old_state available");
 
         let mut history = self.history.take();
-        history.commit_revision(&transaction, &old_state);
+        history.commit_revision(&transaction, old_state.selection);
         self.history.set(history);
 
         // Update jumplist entries in the view.
@@ -1309,7 +1309,7 @@ mod test {
 
         // delete
 
-        let transaction = transaction.invert(&old_doc);
+        let transaction = transaction.invert();
         let old_doc = doc.text().clone();
         doc.apply(&transaction, view);
         let changes = Client::changeset_to_changes(
