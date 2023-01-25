@@ -18,7 +18,12 @@ impl imara_diff::Sink for CharChangeSetBuilder<'_> {
     type Out = ();
     fn process_change(&mut self, before: Range<u32>, after: Range<u32>) {
         self.res.retain((before.start - self.pos) as usize);
-        self.res.delete(before.len());
+
+        let before_text = self.hunk.before[before.start as usize..before.end as usize]
+            .iter()
+            .map(|&token| self.hunk.interner[token])
+            .collect();
+        self.res.delete(before.len(), before_text);
         self.pos = before.end;
 
         let res = self.hunk.after[after.start as usize..after.end as usize]
@@ -66,11 +71,16 @@ impl imara_diff::Sink for LineChangeSetBuilder<'_> {
             || 5 * len_after < len_before && len_before > 10
             || len_before + len_after > 200
         {
+            let mut sum = 0;
             let remove = self.file.before[before.start as usize..before.end as usize]
                 .iter()
-                .map(|&it| self.file.interner[it].len_chars())
-                .sum();
-            self.res.delete(remove);
+                .map(|&it| {
+                    let res = self.file.interner[it];
+                    sum += res.len_chars();
+                    res.to_string()
+                })
+                .collect();
+            self.res.delete(sum, remove);
             let mut fragment = Tendril::new();
             if len_after > 500 {
                 // copying a rope line by line is slower then copying the entire

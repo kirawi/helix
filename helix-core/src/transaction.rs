@@ -59,7 +59,7 @@ impl ChangeSet {
     }
 
     // Changeset builder operations: delete/insert/retain
-    pub(crate) fn delete(&mut self, n: usize) {
+    pub(crate) fn delete(&mut self, n: usize, tendril: Tendril) {
         use Operation::*;
         if n == 0 {
             return;
@@ -68,9 +68,11 @@ impl ChangeSet {
         self.len += n;
 
         if let Some(Delete(count)) = self.changes.last_mut() {
+            self.deletions.last_mut().unwrap().push_str(&tendril);
             *count += n;
         } else {
             self.changes.push(Delete(n));
+            self.deletions.push(tendril);
         }
     }
 
@@ -135,6 +137,11 @@ impl ChangeSet {
         let mut head_a = changes_a.next();
         let mut head_b = changes_b.next();
 
+        let mut deletions_a = self.deletions.into_iter();
+        let mut deletions_b = other.deletions.into_iter();
+        let mut deletion_head_a = deletions_a.next();
+        let mut deletion_head_b = deletions_b.next();
+
         let mut changes = Self::with_capacity(len); // TODO: max(a, b), shrink_to_fit() afterwards
 
         loop {
@@ -147,9 +154,10 @@ impl ChangeSet {
                 }
                 // deletion in A
                 (Some(Delete(i)), b) => {
-                    changes.delete(i);
+                    changes.delete(i, deletion_head_a.unwrap());
                     head_a = changes_a.next();
                     head_b = b;
+                    deletion_head_a = deletions_a.next();
                 }
                 // insertion in B
                 (a, Some(Insert(current))) => {
@@ -221,21 +229,27 @@ impl ChangeSet {
                         }
                     }
                 }
+                // doc a -> b        doc b -> c
                 (Some(Retain(i)), Some(Delete(j))) => match i.cmp(&j) {
+                    // While the text remains deleted for the span...
                     Ordering::Less => {
-                        changes.delete(i);
+                        let tail = deletion_head_b.as_mut().unwrap().split_off(i);
+                        changes.delete(i, tail);
                         head_a = changes_a.next();
                         head_b = Some(Delete(j - i));
                     }
+                    // When they delete the same number of chars.
                     Ordering::Equal => {
-                        changes.delete(j);
+                        changes.delete(j, deletion_head_b.unwrap());
                         head_a = changes_a.next();
                         head_b = changes_b.next();
+                        deletion_head_b = deletions_b.next();
                     }
                     Ordering::Greater => {
-                        changes.delete(j);
+                        changes.delete(j, deletion_head_b.unwrap());
                         head_a = Some(Retain(i - j));
                         head_b = changes_b.next();
+                        deletion_head_b = deletions_b.next();
                     }
                 },
             };
@@ -282,7 +296,7 @@ impl ChangeSet {
                 }
                 Insert(s) => {
                     let chars = s.chars().count();
-                    changes.delete(chars);
+                    changes.delete(chars, s.clone());
                 }
             }
         }
@@ -485,12 +499,13 @@ impl Transaction {
             // Retain from last "to" to current "from"
             changeset.retain(from - last);
             let span = to - from;
+            let span_text = doc.slice(to..from).to_string().into();
             match tendril {
                 Some(text) => {
                     changeset.insert(text);
-                    changeset.delete(span);
+                    changeset.delete(span, span_text);
                 }
-                None => changeset.delete(span),
+                None => changeset.delete(span, span_text),
             }
             last = to;
         }
