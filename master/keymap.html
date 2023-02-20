@@ -4,7 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Keymap</title>
+
+
         <!-- Custom HTML head -->
+        
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,17 +19,20 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -85,7 +91,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -113,6 +119,9 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        <a href="https://github.com/helix-editor/helix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -126,6 +135,7 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -258,6 +268,7 @@
 <tr><td><code>s</code></td><td>Select all regex matches inside selections</td><td><code>select_regex</code></td></tr>
 <tr><td><code>S</code></td><td>Split selection into subselections on regex matches</td><td><code>split_selection</code></td></tr>
 <tr><td><code>Alt-s</code></td><td>Split selection on newlines</td><td><code>split_selection_on_newline</code></td></tr>
+<tr><td><code>Alt-_ </code></td><td>Merge consecutive selections</td><td><code>merge_consecutive_selections</code></td></tr>
 <tr><td><code>&amp;</code></td><td>Align selection in columns</td><td><code>align_selections</code></td></tr>
 <tr><td><code>_</code></td><td>Trim whitespace from the selection</td><td><code>trim_selections</code></td></tr>
 <tr><td><code>;</code></td><td>Collapse selection onto a single cursor</td><td><code>collapse_selection</code></td></tr>
@@ -276,7 +287,7 @@
 <tr><td><code>X</code></td><td>Extend selection to line bounds (line-wise selection)</td><td><code>extend_to_line_bounds</code></td></tr>
 <tr><td><code>Alt-x</code></td><td>Shrink selection to line bounds (line-wise selection)</td><td><code>shrink_to_line_bounds</code></td></tr>
 <tr><td><code>J</code></td><td>Join lines inside selection</td><td><code>join_selections</code></td></tr>
-<tr><td><code>Alt-J</code></td><td>Join lines inside selection and select space</td><td><code>join_selections_space</code></td></tr>
+<tr><td><code>Alt-J</code></td><td>Join lines inside selection and select the inserted space</td><td><code>join_selections_space</code></td></tr>
 <tr><td><code>K</code></td><td>Keep selections matching the regex</td><td><code>keep_selections</code></td></tr>
 <tr><td><code>Alt-K</code></td><td>Remove selections matching the regex</td><td><code>remove_selections</code></td></tr>
 <tr><td><code>Ctrl-c</code></td><td>Comment/uncomment the selections</td><td><code>toggle_comments</code></td></tr>
@@ -309,11 +320,15 @@
 <tr><td><code>Space</code></td><td>Enter <a href="#space-mode">space mode</a></td><td>N/A</td></tr>
 </tbody></table>
 </div>
+<p>These modes (except command mode) can be configured by
+<a href="https://docs.helix-editor.com/remapping.html#minor-modes">remapping keys</a>.</p>
 <h4 id="view-mode"><a class="header" href="#view-mode">View mode</a></h4>
+<p>Accessed by typing <code>z</code> in <a href="#normal-mode">normal mode</a>.</p>
 <p>View mode is intended for scrolling and manipulating the view without changing
-the selection. The &quot;sticky&quot; variant of this mode is persistent; use the Escape
-key to return to normal mode after usage (useful when you're simply looking
-over text and not actively editing it).</p>
+the selection. The &quot;sticky&quot; variant of this mode (accessed by typing <code>Z</code> in
+normal mode) is persistent; use the Escape key to return to normal mode after
+usage (useful when you're simply looking over text and not actively editing
+it).</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>z</code>, <code>c</code></td><td>Vertically center the line</td><td><code>align_view_center</code></td></tr>
 <tr><td><code>t</code></td><td>Align the line to the top of the screen</td><td><code>align_view_top</code></td></tr>
@@ -328,6 +343,7 @@ over text and not actively editing it).</p>
 </tbody></table>
 </div>
 <h4 id="goto-mode"><a class="header" href="#goto-mode">Goto mode</a></h4>
+<p>Accessed by typing <code>g</code> in <a href="#normal-mode">normal mode</a>.</p>
 <p>Jumps to various locations.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>g</code></td><td>Go to line number <code>&lt;n&gt;</code> else start of file</td><td><code>goto_file_start</code></td></tr>
@@ -351,9 +367,9 @@ over text and not actively editing it).</p>
 </tbody></table>
 </div>
 <h4 id="match-mode"><a class="header" href="#match-mode">Match mode</a></h4>
-<p>Enter this mode using <code>m</code> from normal mode. See the relevant section
-in <a href="./usage.html">Usage</a> for an explanation about <a href="./usage.html#surround">surround</a>
-and <a href="./usage.html#textobject">textobject</a> usage.</p>
+<p>Accessed by typing <code>m</code> in <a href="#normal-mode">normal mode</a>.</p>
+<p>See the relevant section in <a href="./usage.html">Usage</a> for an explanation about
+<a href="./usage.html#surround">surround</a> and <a href="./usage.html#textobjects">textobject</a> usage.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>m</code></td><td>Goto matching bracket (<strong>TS</strong>)</td><td><code>match_brackets</code></td></tr>
 <tr><td><code>s</code> <code>&lt;char&gt;</code></td><td>Surround current selection with <code>&lt;char&gt;</code></td><td><code>surround_add</code></td></tr>
@@ -365,6 +381,7 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 </div>
 <p>TODO: Mappings for selecting syntax nodes (a superset of <code>[</code>).</p>
 <h4 id="window-mode"><a class="header" href="#window-mode">Window mode</a></h4>
+<p>Accessed by typing <code>Ctrl-w</code> in <a href="#normal-mode">normal mode</a>.</p>
 <p>This layer is similar to Vim keybindings as Kakoune does not support window.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>w</code>, <code>Ctrl-w</code></td><td>Switch to next window</td><td><code>rotate_view</code></td></tr>
@@ -385,6 +402,7 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 </tbody></table>
 </div>
 <h4 id="space-mode"><a class="header" href="#space-mode">Space mode</a></h4>
+<p>Accessed by typing <code>Space</code> in <a href="#normal-mode">normal mode</a>.</p>
 <p>This layer is a kludge of mappings, mostly pickers.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>f</code></td><td>Open file picker</td><td><code>file_picker</code></td></tr>
@@ -394,8 +412,8 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 <tr><td><code>k</code></td><td>Show documentation for item under cursor in a <a href="#popup">popup</a> (<strong>LSP</strong>)</td><td><code>hover</code></td></tr>
 <tr><td><code>s</code></td><td>Open document symbol picker (<strong>LSP</strong>)</td><td><code>symbol_picker</code></td></tr>
 <tr><td><code>S</code></td><td>Open workspace symbol picker (<strong>LSP</strong>)</td><td><code>workspace_symbol_picker</code></td></tr>
-<tr><td><code>g</code></td><td>Open document diagnostics picker (<strong>LSP</strong>)</td><td><code>diagnostics_picker</code></td></tr>
-<tr><td><code>G</code></td><td>Open workspace diagnostics picker (<strong>LSP</strong>)</td><td><code>workspace_diagnostics_picker</code></td></tr>
+<tr><td><code>d</code></td><td>Open document diagnostics picker (<strong>LSP</strong>)</td><td><code>diagnostics_picker</code></td></tr>
+<tr><td><code>D</code></td><td>Open workspace diagnostics picker (<strong>LSP</strong>)</td><td><code>workspace_diagnostics_picker</code></td></tr>
 <tr><td><code>r</code></td><td>Rename symbol (<strong>LSP</strong>)</td><td><code>rename_symbol</code></td></tr>
 <tr><td><code>a</code></td><td>Apply code action  (<strong>LSP</strong>)</td><td><code>code_action</code></td></tr>
 <tr><td><code>'</code></td><td>Open last fuzzy picker</td><td><code>last_picker</code></td></tr>
@@ -422,24 +440,28 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 <h4 id="unimpaired"><a class="header" href="#unimpaired">Unimpaired</a></h4>
 <p>Mappings in the style of <a href="https://github.com/tpope/vim-unimpaired">vim-unimpaired</a>.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
-<tr><td><code>[d</code></td><td>Go to previous diagnostic (<strong>LSP</strong>)</td><td><code>goto_prev_diag</code></td></tr>
 <tr><td><code>]d</code></td><td>Go to next diagnostic (<strong>LSP</strong>)</td><td><code>goto_next_diag</code></td></tr>
-<tr><td><code>[D</code></td><td>Go to first diagnostic in document (<strong>LSP</strong>)</td><td><code>goto_first_diag</code></td></tr>
+<tr><td><code>[d</code></td><td>Go to previous diagnostic (<strong>LSP</strong>)</td><td><code>goto_prev_diag</code></td></tr>
 <tr><td><code>]D</code></td><td>Go to last diagnostic in document (<strong>LSP</strong>)</td><td><code>goto_last_diag</code></td></tr>
+<tr><td><code>[D</code></td><td>Go to first diagnostic in document (<strong>LSP</strong>)</td><td><code>goto_first_diag</code></td></tr>
 <tr><td><code>]f</code></td><td>Go to next function (<strong>TS</strong>)</td><td><code>goto_next_function</code></td></tr>
 <tr><td><code>[f</code></td><td>Go to previous function (<strong>TS</strong>)</td><td><code>goto_prev_function</code></td></tr>
-<tr><td><code>]c</code></td><td>Go to next class (<strong>TS</strong>)</td><td><code>goto_next_class</code></td></tr>
-<tr><td><code>[c</code></td><td>Go to previous class (<strong>TS</strong>)</td><td><code>goto_prev_class</code></td></tr>
+<tr><td><code>]t</code></td><td>Go to next type definition (<strong>TS</strong>)</td><td><code>goto_next_class</code></td></tr>
+<tr><td><code>[t</code></td><td>Go to previous type definition (<strong>TS</strong>)</td><td><code>goto_prev_class</code></td></tr>
 <tr><td><code>]a</code></td><td>Go to next argument/parameter (<strong>TS</strong>)</td><td><code>goto_next_parameter</code></td></tr>
 <tr><td><code>[a</code></td><td>Go to previous argument/parameter (<strong>TS</strong>)</td><td><code>goto_prev_parameter</code></td></tr>
-<tr><td><code>]o</code></td><td>Go to next comment (<strong>TS</strong>)</td><td><code>goto_next_comment</code></td></tr>
-<tr><td><code>[o</code></td><td>Go to previous comment (<strong>TS</strong>)</td><td><code>goto_prev_comment</code></td></tr>
-<tr><td><code>]t</code></td><td>Go to next test (<strong>TS</strong>)</td><td><code>goto_next_test</code></td></tr>
-<tr><td><code>]t</code></td><td>Go to previous test (<strong>TS</strong>)</td><td><code>goto_prev_test</code></td></tr>
+<tr><td><code>]c</code></td><td>Go to next comment (<strong>TS</strong>)</td><td><code>goto_next_comment</code></td></tr>
+<tr><td><code>[c</code></td><td>Go to previous comment (<strong>TS</strong>)</td><td><code>goto_prev_comment</code></td></tr>
+<tr><td><code>]T</code></td><td>Go to next test (<strong>TS</strong>)</td><td><code>goto_next_test</code></td></tr>
+<tr><td><code>[T</code></td><td>Go to previous test (<strong>TS</strong>)</td><td><code>goto_prev_test</code></td></tr>
 <tr><td><code>]p</code></td><td>Go to next paragraph</td><td><code>goto_next_paragraph</code></td></tr>
 <tr><td><code>[p</code></td><td>Go to previous paragraph</td><td><code>goto_prev_paragraph</code></td></tr>
-<tr><td><code>[Space</code></td><td>Add newline above</td><td><code>add_newline_above</code></td></tr>
+<tr><td><code>]g</code></td><td>Go to next change</td><td><code>goto_next_change</code></td></tr>
+<tr><td><code>[g</code></td><td>Go to previous change</td><td><code>goto_prev_change</code></td></tr>
+<tr><td><code>]G</code></td><td>Go to last change</td><td><code>goto_last_change</code></td></tr>
+<tr><td><code>[G</code></td><td>Go to first change</td><td><code>goto_first_change</code></td></tr>
 <tr><td><code>]Space</code></td><td>Add newline below</td><td><code>add_newline_below</code></td></tr>
+<tr><td><code>[Space</code></td><td>Add newline above</td><td><code>add_newline_above</code></td></tr>
 </tbody></table>
 </div>
 <h2 id="insert-mode"><a class="header" href="#insert-mode">Insert mode</a></h2>
@@ -546,9 +568,11 @@ you to selectively add search terms to your selections.</p>
                             <a rel="prev" href="usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="commands.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -558,6 +582,7 @@ you to selectively add search terms to your selections.</p>
                     <a rel="prev" href="usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="commands.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -565,16 +590,24 @@ you to selectively add search terms to your selections.</p>
 
         </div>
 
+
+
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
+
+
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+
+
     </body>
 </html>

@@ -4,7 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Themes</title>
+
+
         <!-- Custom HTML head -->
+        
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,17 +19,20 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -85,7 +91,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -113,6 +119,9 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        <a href="https://github.com/helix-editor/helix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -126,6 +135,7 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -144,9 +154,9 @@
 <p>The names &quot;default&quot; and &quot;base16_default&quot; are reserved for the builtin themes and cannot be overridden by user defined themes.</p>
 <p>The default theme.toml can be found <a href="https://github.com/helix-editor/helix/blob/master/theme.toml">here</a>, and user submitted themes <a href="https://github.com/helix-editor/helix/blob/master/runtime/themes">here</a>. </p>
 <p>Each line in the theme file is specified as below:</p>
-<pre><code class="language-toml">key = { fg = &quot;#ffffff&quot;, bg = &quot;#000000&quot;, modifiers = [&quot;bold&quot;, &quot;italic&quot;] }
+<pre><code class="language-toml">key = { fg = &quot;#ffffff&quot;, bg = &quot;#000000&quot;, underline = { color = &quot;#ff0000&quot;, style = &quot;curl&quot;}, modifiers = [&quot;bold&quot;, &quot;italic&quot;] }
 </code></pre>
-<p>where <code>key</code> represents what you want to style, <code>fg</code> specifies the foreground color, <code>bg</code> the background color, and <code>modifiers</code> is a list of style modifiers. <code>bg</code> and <code>modifiers</code> can be omitted to defer to the defaults.</p>
+<p>where <code>key</code> represents what you want to style, <code>fg</code> specifies the foreground color, <code>bg</code> the background color, <code>underline</code> the underline <code>style</code>/<code>color</code>, and <code>modifiers</code> is a list of style modifiers. <code>bg</code>, <code>underline</code> and <code>modifiers</code> can be omitted to defer to the defaults.</p>
 <p>To specify only the foreground color:</p>
 <pre><code class="language-toml">key = &quot;#ffffff&quot;
 </code></pre>
@@ -203,6 +213,21 @@ over it and is merged into the default palette.</p>
 <tr><td><code>crossed_out</code></td></tr>
 </tbody></table>
 </div>
+<blockquote>
+<p>Note: The <code>underlined</code> modifier is deprecated and only available for backwards compatibility.
+Its behavior is equivalent to setting <code>underline.style=&quot;line&quot;</code>.</p>
+</blockquote>
+<h3 id="underline-style"><a class="header" href="#underline-style">Underline Style</a></h3>
+<p>One of the following values may be used as a value for <code>underline.style</code>. </p>
+<p>Some styles might not be supported by your terminal emulator.</p>
+<div class="table-wrapper"><table><thead><tr><th>Modifier</th></tr></thead><tbody>
+<tr><td><code>line</code></td></tr>
+<tr><td><code>curl</code></td></tr>
+<tr><td><code>dashed</code></td></tr>
+<tr><td><code>dotted</code></td></tr>
+<tr><td><code>double_line</code></td></tr>
+</tbody></table>
+</div>
 <h3 id="inheritance"><a class="header" href="#inheritance">Inheritance</a></h3>
 <p>Extend upon other themes by setting the <code>inherits</code> property to an existing theme.</p>
 <pre><code class="language-toml">inherits = &quot;boo_berry&quot;
@@ -230,6 +255,11 @@ berry = &quot;#2A2A4D&quot;
 <p><code>type</code> - Types</p>
 <ul>
 <li><code>builtin</code> - Primitive types provided by the language (<code>int</code>, <code>usize</code>)</li>
+<li><code>enum</code>
+<ul>
+<li><code>variant</code></li>
+</ul>
+</li>
 </ul>
 </li>
 <li>
@@ -345,6 +375,9 @@ berry = &quot;#2A2A4D&quot;
 <p><code>namespace</code></p>
 </li>
 <li>
+<p><code>special</code></p>
+</li>
+<li>
 <p><code>markup</code></p>
 <ul>
 <li><code>heading</code>
@@ -424,10 +457,14 @@ berry = &quot;#2A2A4D&quot;
 <tr><td><code>ui.background</code></td><td></td></tr>
 <tr><td><code>ui.background.separator</code></td><td>Picker separator below input line</td></tr>
 <tr><td><code>ui.cursor</code></td><td></td></tr>
+<tr><td><code>ui.cursor.normal</code></td><td></td></tr>
 <tr><td><code>ui.cursor.insert</code></td><td></td></tr>
 <tr><td><code>ui.cursor.select</code></td><td></td></tr>
 <tr><td><code>ui.cursor.match</code></td><td>Matching bracket etc.</td></tr>
 <tr><td><code>ui.cursor.primary</code></td><td>Cursor with primary selection</td></tr>
+<tr><td><code>ui.cursor.primary.normal</code></td><td></td></tr>
+<tr><td><code>ui.cursor.primary.insert</code></td><td></td></tr>
+<tr><td><code>ui.cursor.primary.select</code></td><td></td></tr>
 <tr><td><code>ui.gutter</code></td><td>Gutter</td></tr>
 <tr><td><code>ui.gutter.selected</code></td><td>Gutter for the line the cursor is on</td></tr>
 <tr><td><code>ui.linenr</code></td><td>Line numbers</td></tr>
@@ -444,10 +481,12 @@ berry = &quot;#2A2A4D&quot;
 <tr><td><code>ui.help</code></td><td>Description box for commands</td></tr>
 <tr><td><code>ui.text</code></td><td>Command prompts, popup text, etc.</td></tr>
 <tr><td><code>ui.text.focus</code></td><td></td></tr>
+<tr><td><code>ui.text.inactive</code></td><td>Same as <code>ui.text</code> but when the text is inactive (e.g. suggestions)</td></tr>
 <tr><td><code>ui.text.info</code></td><td>The key: command text in <code>ui.popup.info</code> boxes</td></tr>
 <tr><td><code>ui.virtual.ruler</code></td><td>Ruler columns (see the <a href="./configuration.html#editor-section"><code>editor.rulers</code> config</a>)</td></tr>
 <tr><td><code>ui.virtual.whitespace</code></td><td>Visible whitespace characters</td></tr>
 <tr><td><code>ui.virtual.indent-guide</code></td><td>Vertical indent width guides</td></tr>
+<tr><td><code>ui.virtual.wrap</code></td><td>Soft-wrap indicator (see the <a href="./configuration.html#editor-section"><code>editor.soft-wrap</code> config</a>)</td></tr>
 <tr><td><code>ui.menu</code></td><td>Code and command completion menus</td></tr>
 <tr><td><code>ui.menu.selected</code></td><td>Selected autocomplete item</td></tr>
 <tr><td><code>ui.menu.scroll</code></td><td><code>fg</code> sets thumb color, <code>bg</code> sets track color of scrollbar</td></tr>
@@ -479,9 +518,11 @@ berry = &quot;#2A2A4D&quot;
                             <a rel="prev" href="configuration.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="remapping.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -491,6 +532,7 @@ berry = &quot;#2A2A4D&quot;
                     <a rel="prev" href="configuration.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="remapping.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -498,16 +540,24 @@ berry = &quot;#2A2A4D&quot;
 
         </div>
 
+
+
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
+
+
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+
+
     </body>
 </html>
