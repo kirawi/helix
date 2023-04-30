@@ -1073,6 +1073,7 @@ name = "helix-core"
 version = "0.6.0"
 dependencies = [
  "ahash 0.8.3",
+ "anyhow",
  "arc-swap",
  "bitflags",
  "chrono",
@@ -1088,6 +1089,7 @@ dependencies = [
  "ropey",
  "serde",
  "serde_json",
+ "sha1_smol",
  "slotmap",
  "smallvec",
  "smartstring",
