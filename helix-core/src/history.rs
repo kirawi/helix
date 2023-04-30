@@ -2,6 +2,7 @@ use crate::{Assoc, ChangeSet, Range, Rope, Selection, Transaction};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::num::NonZeroUsize;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone)]
@@ -47,7 +48,7 @@ pub struct State {
 ///    delete, we also store an inversion of the transaction.
 ///
 /// Using time to navigate the history: <https://github.com/helix-editor/helix/pull/194>
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct History {
     revisions: Vec<Revision>,
     current: usize,
@@ -58,10 +59,10 @@ pub struct History {
 struct Revision {
     parent: usize,
     last_child: Option<NonZeroUsize>,
-    transaction: Transaction,
+    transaction: Arc<Transaction>,
     // We need an inversion for undos because delete transactions don't store
     // the deleted text.
-    inversion: Transaction,
+    inversion: Arc<Transaction>,
     timestamp: Instant,
 }
 
@@ -72,8 +73,8 @@ impl Default for History {
             revisions: vec![Revision {
                 parent: 0,
                 last_child: None,
-                transaction: Transaction::from(ChangeSet::new(&Rope::new())),
-                inversion: Transaction::from(ChangeSet::new(&Rope::new())),
+                transaction: Arc::new(Transaction::from(ChangeSet::new(&Rope::new()))),
+                inversion: Arc::new(Transaction::from(ChangeSet::new(&Rope::new()))),
                 timestamp: Instant::now(),
             }],
             current: 0,
@@ -102,8 +103,8 @@ impl History {
         self.revisions.push(Revision {
             parent: self.current,
             last_child: None,
-            transaction: transaction.clone(),
-            inversion,
+            transaction: Arc::new(transaction.clone()),
+            inversion: Arc::new(inversion),
             timestamp,
         });
         self.current = new_current;
@@ -128,8 +129,10 @@ impl History {
         let up_txns = up
             .iter()
             .rev()
-            .map(|&n| self.revisions[n].inversion.clone());
-        let down_txns = down.iter().map(|&n| self.revisions[n].transaction.clone());
+            .map(|&n| self.revisions[n].inversion.as_ref().clone());
+        let down_txns = down
+            .iter()
+            .map(|&n| self.revisions[n].transaction.as_ref().clone());
 
         down_txns.chain(up_txns).reduce(|acc, tx| tx.compose(acc))
     }
@@ -215,11 +218,13 @@ impl History {
         let up = self.path_up(self.current, lca);
         let down = self.path_up(to, lca);
         self.current = to;
-        let up_txns = up.iter().map(|&n| self.revisions[n].inversion.clone());
+        let up_txns = up
+            .iter()
+            .map(|&n| self.revisions[n].inversion.as_ref().clone());
         let down_txns = down
             .iter()
             .rev()
-            .map(|&n| self.revisions[n].transaction.clone());
+            .map(|&n| self.revisions[n].transaction.as_ref().clone());
         up_txns.chain(down_txns).collect()
     }
 

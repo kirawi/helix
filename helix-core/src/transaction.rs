@@ -3,8 +3,8 @@ use smallvec::SmallVec;
 use crate::combinators::*;
 use crate::{Range, Rope, Selection, Tendril};
 use std::borrow::Cow;
-use std::fmt::Write;
 use std::io::Read;
+use std::io::Write;
 
 /// (from, to, replacement)
 pub type Change = (usize, usize, Option<Tendril>);
