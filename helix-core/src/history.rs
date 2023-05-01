@@ -122,6 +122,14 @@ impl std::fmt::Display for Error {
 
 const HEADER_TAG: &str = "Helix Undofile 1\n";
 
+impl PartialEq for Revision {
+    fn eq(&self, other: &Self) -> bool {
+        self.parent == other.parent
+            && self.last_child == other.last_child
+            && self.transaction == other.transaction
+            && self.inversion == other.inversion
+    }
+}
 impl Revision {
     fn serialize<W: Write>(&self, writer: &mut W) -> std::io::Result<()> {
         write_usize(writer, self.parent)?;
@@ -186,19 +194,25 @@ impl History {
         let len = read_usize(reader)?;
         let mut revisions: Vec<Revision> = Vec::with_capacity(len);
         for _ in 0..len {
-            let res = Revision::deserialize(reader, timestamp)?;
+            let rev = Revision::deserialize(reader, timestamp)?;
             let len = revisions.len();
-            match revisions.get_mut(res.parent) {
+            match revisions.get_mut(rev.parent) {
                 Some(r) => r.last_child = NonZeroUsize::new(len),
                 None if len != 0 => {
                     anyhow::bail!(Error::InvalidData(format!(
                         "non-contiguous history: {} >= {}",
-                        res.parent, len
+                        rev.parent, len
                     )));
                 }
-                None => {}
+                None => {
+                    // Starting revision check
+                    let default_rev = History::default().revisions.pop().unwrap();
+                    if rev != default_rev {
+                        anyhow::bail!(Error::InvalidData(String::from("Missing 0th revision")));
+                    }
+                }
             }
-            revisions.push(res);
+            revisions.push(rev);
         }
 
         let history = History { current, revisions };
@@ -215,37 +229,41 @@ impl History {
     ///        E -> F
     /// ```
     /// and retain their revision heads.
-    pub fn merge(&mut self, mut other: History, offset: usize) -> anyhow::Result<()> {
+    pub fn merge(&mut self, mut other: History, at: usize) -> anyhow::Result<()> {
+        if at == 0 {
+            *self = other;
+            return Ok(());
+        }
+
+        // Check
         if !self
             .revisions
             .iter()
             .zip(other.revisions.iter())
+            .take(at)
             .all(|(a, b)| {
                 a.parent == b.parent && a.transaction == b.transaction && a.inversion == b.inversion
             })
         {
-            // TODO: Change
             anyhow::bail!(Error::InvalidOffset);
         }
 
-        let revisions = self.revisions.split_off(offset);
-        let len = other.revisions.len();
+        let revisions = self.revisions.split_off(at);
         other.revisions.reserve_exact(revisions.len());
 
-        for r in revisions {
-            // parent is 0-indexed, while offset is +1.
-            let parent = if r.parent < offset {
-                r.parent
-            } else {
-                len + (r.parent - offset)
-            };
-            debug_assert!(parent < other.revisions.len());
+        let offset = (other.revisions.len() - 1) - at;
+        for mut r in revisions {
+            // Update parents of new revisions
+            if r.parent >= at {
+                r.parent += offset;
+            }
+            debug_assert!(r.parent < other.revisions.len());
 
-            other.revisions.get_mut(parent).unwrap().last_child =
+            other.revisions.get_mut(r.parent).unwrap().last_child =
                 NonZeroUsize::new(other.revisions.len());
             other.revisions.push(r);
         }
-        self.revisions = other.revisions;
+        *self = other;
         Ok(())
     }
 
