@@ -229,39 +229,41 @@ impl History {
     ///        E -> F
     /// ```
     /// and retain their revision heads.
-    pub fn merge(&mut self, mut other: History, at: usize) -> anyhow::Result<()> {
-        if at == 0 {
-            *self = other;
-            return Ok(());
-        }
+    // TODO: return transaction to update view
+    pub fn merge(&mut self, mut other: History, mut at: usize) -> anyhow::Result<()> {
+        at = std::cmp::max(1, at);
 
-        // Check
-        if !self
-            .revisions
-            .iter()
-            .zip(other.revisions.iter())
-            .take(at)
-            .all(|(a, b)| {
-                a.parent == b.parent && a.transaction == b.transaction && a.inversion == b.inversion
-            })
-        {
-            anyhow::bail!(Error::InvalidOffset);
-        }
-
-        let revisions = self.revisions.split_off(at);
-        other.revisions.reserve_exact(revisions.len());
-
-        let offset = (other.revisions.len() - 1) - at;
-        for mut r in revisions {
-            // Update parents of new revisions
-            if r.parent >= at {
-                r.parent += offset;
+        if self.revisions.len() > 1 {
+            // Check
+            if !self
+                .revisions
+                .iter()
+                .zip(other.revisions.iter())
+                .take(at)
+                .all(|(a, b)| {
+                    a.parent == b.parent
+                        && a.transaction == b.transaction
+                        && a.inversion == b.inversion
+                })
+            {
+                anyhow::bail!(Error::InvalidOffset);
             }
-            debug_assert!(r.parent < other.revisions.len());
 
-            other.revisions.get_mut(r.parent).unwrap().last_child =
-                NonZeroUsize::new(other.revisions.len());
-            other.revisions.push(r);
+            let revisions = self.revisions.split_off(at);
+            other.revisions.reserve_exact(revisions.len());
+
+            let offset = (other.revisions.len() - 1) - at;
+            for mut r in revisions {
+                // Update parents of new revisions
+                if r.parent >= at {
+                    r.parent += offset;
+                }
+                debug_assert!(r.parent < other.revisions.len());
+
+                other.revisions.get_mut(r.parent).unwrap().last_child =
+                    NonZeroUsize::new(other.revisions.len());
+                other.revisions.push(r);
+            }
         }
         *self = other;
         Ok(())
