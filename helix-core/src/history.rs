@@ -219,21 +219,19 @@ impl History {
         Ok((last_saved_revision, history))
     }
 
-    /// If two histories originate from: `A -> B (B is head)` but have deviated since then such that
-    /// the first history is: `A -> B -> C -> D (D is head)` and the second one is:
-    /// `A -> B -> E -> F (F is head)`.
-    /// Then they are merged into
+    /// If `self.revisions = [A, B, C, D]` and `other.revisions = `[A, B, E, F]`, then
+    /// they are merged into `[A, B, E, F, C, D]` where the tree can be represented as:
     /// ```md
     /// A -> B -> C -> D
     ///       \  
     ///        E -> F
     /// ```
-    /// and retain their revision heads.
     // TODO: return transaction to update view
     pub fn merge(&mut self, mut other: History, mut at: usize) -> anyhow::Result<()> {
-        at = std::cmp::max(1, at);
-
         if self.revisions.len() > 1 {
+            // All histories have the same starting revision.
+            at = std::cmp::max(1, at);
+
             // Check
             if !self
                 .revisions
