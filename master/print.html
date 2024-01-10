@@ -348,6 +348,9 @@ grammars in the local <code>runtime</code> folder.</p>
 </li>
 </ol>
 <blockquote>
+<p>💡 If you do not want to fetch or build grammars, set an environment variable <code>HELIX_DISABLE_AUTO_GRAMMAR_BUILD</code></p>
+</blockquote>
+<blockquote>
 <p>💡 Tree-sitter grammars can be fetched and compiled if not pre-packaged. Fetch
 grammars with <code>hx --grammar fetch</code> and compile them with
 <code>hx --grammar build</code>. This will install them in
@@ -649,7 +652,7 @@ selection to the &quot;func&quot; <code>identifier</code>.</p>
 <p>💡 Mappings marked (<strong>TS</strong>) require a tree-sitter grammar for the file type.</p>
 </blockquote>
 <h2 id="normal-mode"><a class="header" href="#normal-mode">Normal mode</a></h2>
-<p>Normal mode is the default mode when you launch helix. Return to it from other modes by typing <code>Escape</code>.</p>
+<p>Normal mode is the default mode when you launch helix. You can return to it from other modes by pressing the <code>Escape</code> key.</p>
 <h3 id="movement"><a class="header" href="#movement">Movement</a></h3>
 <blockquote>
 <p>NOTE: Unlike Vim, <code>f</code>, <code>F</code>, <code>t</code> and <code>T</code> are not confined to the current line.</p>
@@ -811,7 +814,7 @@ useful when you're simply looking over text and not actively editing it.</p>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Description</th><th>Command</th></tr></thead><tbody>
 <tr><td><code>g</code></td><td>Go to line number <code>&lt;n&gt;</code> else start of file</td><td><code>goto_file_start</code></td></tr>
 <tr><td><code>e</code></td><td>Go to the end of the file</td><td><code>goto_last_line</code></td></tr>
-<tr><td><code>f</code></td><td>Go to files in the selection</td><td><code>goto_file</code></td></tr>
+<tr><td><code>f</code></td><td>Go to files in the selections</td><td><code>goto_file</code></td></tr>
 <tr><td><code>h</code></td><td>Go to the start of the line</td><td><code>goto_line_start</code></td></tr>
 <tr><td><code>l</code></td><td>Go to the end of the line</td><td><code>goto_line_end</code></td></tr>
 <tr><td><code>s</code></td><td>Go to first non-whitespace character of the line</td><td><code>goto_first_nonwhitespace</code></td></tr>
@@ -852,8 +855,8 @@ useful when you're simply looking over text and not actively editing it.</p>
 <tr><td><code>w</code>, <code>Ctrl-w</code></td><td>Switch to next window</td><td><code>rotate_view</code></td></tr>
 <tr><td><code>v</code>, <code>Ctrl-v</code></td><td>Vertical right split</td><td><code>vsplit</code></td></tr>
 <tr><td><code>s</code>, <code>Ctrl-s</code></td><td>Horizontal bottom split</td><td><code>hsplit</code></td></tr>
-<tr><td><code>f</code></td><td>Go to files in the selection in horizontal splits</td><td><code>goto_file</code></td></tr>
-<tr><td><code>F</code></td><td>Go to files in the selection in vertical splits</td><td><code>goto_file</code></td></tr>
+<tr><td><code>f</code></td><td>Go to files in the selections in horizontal splits</td><td><code>goto_file</code></td></tr>
+<tr><td><code>F</code></td><td>Go to files in the selections in vertical splits</td><td><code>goto_file</code></td></tr>
 <tr><td><code>h</code>, <code>Ctrl-h</code>, <code>Left</code></td><td>Move to left split</td><td><code>jump_view_left</code></td></tr>
 <tr><td><code>j</code>, <code>Ctrl-j</code>, <code>Down</code></td><td>Move to split below</td><td><code>jump_view_down</code></td></tr>
 <tr><td><code>k</code>, <code>Ctrl-k</code>, <code>Up</code></td><td>Move to split above</td><td><code>jump_view_up</code></td></tr>
@@ -1052,7 +1055,7 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:write-buffer-close!</code>, <code>:wbc!</code></td><td>Force write changes to disk creating necessary subdirectories and closes the buffer. Accepts an optional path (:write-buffer-close! some/path.txt)</td></tr>
 <tr><td><code>:new</code>, <code>:n</code></td><td>Create a new scratch buffer.</td></tr>
 <tr><td><code>:format</code>, <code>:fmt</code></td><td>Format the file using the LSP formatter.</td></tr>
-<tr><td><code>:indent-style</code></td><td>Set the indentation style for editing. ('t' for tabs or 1-8 for number of spaces.)</td></tr>
+<tr><td><code>:indent-style</code></td><td>Set the indentation style for editing. ('t' for tabs or 1-16 for number of spaces.)</td></tr>
 <tr><td><code>:line-ending</code></td><td>Set the document's default line ending. Options: crlf, lf.</td></tr>
 <tr><td><code>:earlier</code>, <code>:ear</code></td><td>Jump back to an earlier point in edit history. Accepts a number of steps or a time span.</td></tr>
 <tr><td><code>:later</code>, <code>:lat</code></td><td>Jump to a later point in edit history. Accepts a number of steps or a time span.</td></tr>
@@ -1130,187 +1133,381 @@ appropriate Language Server.</p>
 <p>You can check the language support in your installed helix version with <code>hx --health</code>.</p>
 <p>Also see the <a href="./languages.html">Language Configuration</a> docs and the <a href="./guides/adding_languages.html">Adding
 Languages</a> guide for more language configuration information.</p>
-<div class="table-wrapper"><table><thead><tr><th>Language</th><th>Syntax Highlighting</th><th>Treesitter Textobjects</th><th>Auto Indent</th><th>Rainbow Brackets</th><th>Default LSP</th></tr></thead><tbody>
-<tr><td>astro</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>awk</td><td>✓</td><td>✓</td><td></td><td></td><td><code>awk-language-server</code></td></tr>
-<tr><td>bash</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>bash-language-server</code></td></tr>
-<tr><td>bass</td><td>✓</td><td></td><td></td><td></td><td><code>bass</code></td></tr>
-<tr><td>beancount</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>bibtex</td><td>✓</td><td></td><td></td><td></td><td><code>texlab</code></td></tr>
-<tr><td>bicep</td><td>✓</td><td></td><td></td><td></td><td><code>bicep-langserver</code></td></tr>
-<tr><td>blueprint</td><td>✓</td><td></td><td></td><td></td><td><code>blueprint-compiler</code></td></tr>
-<tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>c-sharp</td><td>✓</td><td>✓</td><td></td><td></td><td><code>OmniSharp</code></td></tr>
-<tr><td>cabal</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>cairo</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>cairo-language-server</code></td></tr>
-<tr><td>capnp</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>clojure</td><td>✓</td><td></td><td></td><td>✓</td><td><code>clojure-lsp</code></td></tr>
-<tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>cmake-language-server</code></td></tr>
-<tr><td>comment</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>common-lisp</td><td>✓</td><td></td><td></td><td>✓</td><td><code>cl-lsp</code></td></tr>
-<tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>crystal</td><td>✓</td><td>✓</td><td></td><td></td><td><code>crystalline</code></td></tr>
-<tr><td>css</td><td>✓</td><td></td><td></td><td>✓</td><td><code>vscode-css-language-server</code></td></tr>
-<tr><td>cue</td><td>✓</td><td></td><td></td><td></td><td><code>cuelsp</code></td></tr>
-<tr><td>d</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>serve-d</code></td></tr>
-<tr><td>dart</td><td>✓</td><td></td><td>✓</td><td></td><td><code>dart</code></td></tr>
-<tr><td>devicetree</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>dhall</td><td>✓</td><td>✓</td><td></td><td></td><td><code>dhall-lsp-server</code></td></tr>
-<tr><td>diff</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>dockerfile</td><td>✓</td><td></td><td></td><td></td><td><code>docker-langserver</code></td></tr>
-<tr><td>dot</td><td>✓</td><td></td><td></td><td></td><td><code>dot-language-server</code></td></tr>
-<tr><td>dtd</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>eex</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>elixir</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>elixir-ls</code></td></tr>
-<tr><td>elm</td><td>✓</td><td>✓</td><td></td><td></td><td><code>elm-language-server</code></td></tr>
-<tr><td>elvish</td><td>✓</td><td></td><td></td><td></td><td><code>elvish</code></td></tr>
-<tr><td>env</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>erb</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td>✓</td><td><code>erlang_ls</code></td></tr>
-<tr><td>esdl</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>forth</td><td>✓</td><td></td><td></td><td></td><td><code>forth-lsp</code></td></tr>
-<tr><td>fortran</td><td>✓</td><td></td><td>✓</td><td></td><td><code>fortls</code></td></tr>
-<tr><td>fsharp</td><td>✓</td><td></td><td></td><td></td><td><code>fsautocomplete</code></td></tr>
-<tr><td>gdscript</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>gemini</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>git-commit</td><td>✓</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-config</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td>✓</td><td><code>gleam</code></td></tr>
-<tr><td>glsl</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>gopls</code></td></tr>
-<tr><td>godot-resource</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>gomod</td><td>✓</td><td></td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>gotmpl</td><td>✓</td><td></td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>gowork</td><td>✓</td><td></td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>graphql</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>hare</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>haskell</td><td>✓</td><td>✓</td><td></td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
-<tr><td>haskell-persistent</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td></td><td><code>terraform-ls</code></td></tr>
-<tr><td>heex</td><td>✓</td><td>✓</td><td></td><td></td><td><code>elixir-ls</code></td></tr>
-<tr><td>hosts</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>html</td><td>✓</td><td></td><td></td><td>✓</td><td><code>vscode-html-language-server</code></td></tr>
-<tr><td>hurl</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>idris</td><td></td><td></td><td></td><td></td><td><code>idris2-lsp</code></td></tr>
-<tr><td>iex</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>ini</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>java</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>jdtls</code></td></tr>
-<tr><td>javascript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>jinja</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>json</td><td>✓</td><td></td><td>✓</td><td>✓</td><td><code>vscode-json-language-server</code></td></tr>
-<tr><td>jsonnet</td><td>✓</td><td></td><td></td><td></td><td><code>jsonnet-language-server</code></td></tr>
-<tr><td>jsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>julia</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>julia</code></td></tr>
-<tr><td>just</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>kdl</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>kotlin</td><td>✓</td><td></td><td></td><td></td><td><code>kotlin-language-server</code></td></tr>
-<tr><td>latex</td><td>✓</td><td>✓</td><td></td><td></td><td><code>texlab</code></td></tr>
-<tr><td>lean</td><td>✓</td><td></td><td></td><td></td><td><code>lean</code></td></tr>
-<tr><td>ledger</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>llvm-mir-yaml</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>lua</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>lua-language-server</code></td></tr>
-<tr><td>make</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>markdoc</td><td>✓</td><td></td><td></td><td></td><td><code>markdoc-ls</code></td></tr>
-<tr><td>markdown</td><td>✓</td><td></td><td></td><td></td><td><code>marksman</code></td></tr>
-<tr><td>markdown.inline</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>matlab</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>mermaid</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>meson</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>mint</td><td></td><td></td><td></td><td></td><td><code>mint</code></td></tr>
-<tr><td>msbuild</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>nasm</td><td>✓</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>nickel</td><td>✓</td><td></td><td>✓</td><td></td><td><code>nls</code></td></tr>
-<tr><td>nim</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>nimlangserver</code></td></tr>
-<tr><td>nix</td><td>✓</td><td></td><td></td><td>✓</td><td><code>nil</code></td></tr>
-<tr><td>nu</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>nunjucks</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td></td><td><code>ocamllsp</code></td></tr>
-<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td></td><td><code>ocamllsp</code></td></tr>
-<tr><td>odin</td><td>✓</td><td></td><td>✓</td><td></td><td><code>ols</code></td></tr>
-<tr><td>opencl</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>clangd</code></td></tr>
-<tr><td>openscad</td><td>✓</td><td></td><td></td><td></td><td><code>openscad-lsp</code></td></tr>
-<tr><td>org</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>pascal</td><td>✓</td><td>✓</td><td></td><td></td><td><code>pasls</code></td></tr>
-<tr><td>passwd</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>pem</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>perl</td><td>✓</td><td></td><td></td><td></td><td><code>perlnavigator</code></td></tr>
-<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>intelephense</code></td></tr>
-<tr><td>po</td><td>✓</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>pod</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>ponylang</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>prisma</td><td>✓</td><td></td><td></td><td></td><td><code>prisma-language-server</code></td></tr>
-<tr><td>prolog</td><td></td><td></td><td></td><td></td><td><code>swipl</code></td></tr>
-<tr><td>protobuf</td><td>✓</td><td></td><td>✓</td><td></td><td><code>bufls</code>, <code>pb</code></td></tr>
-<tr><td>prql</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>purescript</td><td>✓</td><td></td><td></td><td></td><td><code>purescript-language-server</code></td></tr>
-<tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>pylsp</code></td></tr>
-<tr><td>qml</td><td>✓</td><td></td><td>✓</td><td></td><td><code>qmlls</code></td></tr>
-<tr><td>r</td><td>✓</td><td></td><td></td><td></td><td><code>R</code></td></tr>
-<tr><td>racket</td><td>✓</td><td></td><td></td><td>✓</td><td><code>racket</code></td></tr>
-<tr><td>regex</td><td>✓</td><td></td><td></td><td>✓</td><td></td></tr>
-<tr><td>rego</td><td>✓</td><td></td><td></td><td></td><td><code>regols</code></td></tr>
-<tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td></td><td><code>rescript-language-server</code></td></tr>
-<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td></td><td><code>R</code></td></tr>
-<tr><td>robot</td><td>✓</td><td></td><td></td><td></td><td><code>robotframework_ls</code></td></tr>
-<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>rst</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>ruby</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>solargraph</code></td></tr>
-<tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>rust-analyzer</code></td></tr>
-<tr><td>sage</td><td>✓</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>scala</td><td>✓</td><td></td><td>✓</td><td></td><td><code>metals</code></td></tr>
-<tr><td>scheme</td><td>✓</td><td></td><td></td><td>✓</td><td></td></tr>
-<tr><td>scss</td><td>✓</td><td></td><td></td><td>✓</td><td><code>vscode-css-language-server</code></td></tr>
-<tr><td>slint</td><td>✓</td><td></td><td>✓</td><td></td><td><code>slint-lsp</code></td></tr>
-<tr><td>smithy</td><td>✓</td><td></td><td></td><td></td><td><code>cs</code></td></tr>
-<tr><td>sml</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>solidity</td><td>✓</td><td></td><td></td><td></td><td><code>solc</code></td></tr>
-<tr><td>sql</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>sshclientconfig</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>starlark</td><td>✓</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>strace</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td></td><td><code>svelteserver</code></td></tr>
-<tr><td>sway</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>forc</code></td></tr>
-<tr><td>swift</td><td>✓</td><td></td><td></td><td></td><td><code>sourcekit-lsp</code></td></tr>
-<tr><td>t32</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>task</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>tfvars</td><td>✓</td><td></td><td>✓</td><td></td><td><code>terraform-ls</code></td></tr>
-<tr><td>todotxt</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>toml</td><td>✓</td><td></td><td></td><td>✓</td><td><code>taplo</code></td></tr>
-<tr><td>tsq</td><td>✓</td><td></td><td></td><td>✓</td><td></td></tr>
-<tr><td>tsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>twig</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>typescript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>ungrammar</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>unison</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>uxntal</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>v</td><td>✓</td><td>✓</td><td>✓</td><td></td><td><code>v-analyzer</code></td></tr>
-<tr><td>vala</td><td>✓</td><td></td><td></td><td></td><td><code>vala-language-server</code></td></tr>
-<tr><td>verilog</td><td>✓</td><td>✓</td><td></td><td></td><td><code>svlangserver</code></td></tr>
-<tr><td>vhdl</td><td>✓</td><td></td><td></td><td></td><td><code>vhdl_ls</code></td></tr>
-<tr><td>vhs</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>vue</td><td>✓</td><td></td><td></td><td></td><td><code>vue-language-server</code></td></tr>
-<tr><td>wast</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>wat</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>webc</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>wgsl</td><td>✓</td><td></td><td></td><td></td><td><code>wgsl_analyzer</code></td></tr>
-<tr><td>wit</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr>
-<tr><td>wren</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>xit</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>xml</td><td>✓</td><td></td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td>✓</td><td><code>yaml-language-server</code></td></tr>
-<tr><td>yuck</td><td>✓</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>zig</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td><code>zls</code></td></tr>
+<div class="table-wrapper"><table><thead><tr><th>Language</th><th>Syntax Highlighting</th><th>Treesitter Textobjects</th><th>Auto Indent</th><th>Default LSP</th></tr></thead><tbody>
+<tr><td>agda</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>astro</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>awk</td><td>✓</td><td>✓</td><td></td><td><code>awk-language-server</code></td></tr>
+<tr><td>bash</td><td>✓</td><td>✓</td><td>✓</td><td><code>bash-language-server</code></td></tr>
+<tr><td>bass</td><td>✓</td><td></td><td></td><td><code>bass</code></td></tr>
+<tr><td>beancount</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>bibtex</td><td>✓</td><td></td><td></td><td><code>texlab</code></td></tr>
+<tr><td>bicep</td><td>✓</td><td></td><td></td><td><code>bicep-langserver</code></td></tr>
+<tr><td>blueprint</td><td>✓</td><td></td><td></td><td><code>blueprint-compiler</code></td></tr>
+<tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
+<tr><td>c-sharp</td><td>✓</td><td>✓</td><td></td><td><code>OmniSharp</code></td></tr>
+<tr><td>cabal</td><td></td><td></td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
+<tr><td>cairo</td><td>✓</td><td>✓</td><td>✓</td><td><code>cairo-language-server</code></td></tr>
+<tr><td>capnp</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>clojure</td><td>✓</td><td></td><td></td><td><code>clojure-lsp</code></td></tr>
+<tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td><code>cmake-language-server</code></td></tr>
+<tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>common-lisp</td><td>✓</td><td></td><td>✓</td><td><code>cl-lsp</code></td></tr>
+<tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
+<tr><td>crystal</td><td>✓</td><td>✓</td><td></td><td><code>crystalline</code></td></tr>
+<tr><td>css</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
+<tr><td>cue</td><td>✓</td><td></td><td></td><td><code>cuelsp</code></td></tr>
+<tr><td>d</td><td>✓</td><td>✓</td><td>✓</td><td><code>serve-d</code></td></tr>
+<tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
+<tr><td>dbml</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>devicetree</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dhall</td><td>✓</td><td>✓</td><td></td><td><code>dhall-lsp-server</code></td></tr>
+<tr><td>diff</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
+<tr><td>dot</td><td>✓</td><td></td><td></td><td><code>dot-language-server</code></td></tr>
+<tr><td>dtd</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>elixir</td><td>✓</td><td>✓</td><td>✓</td><td><code>elixir-ls</code></td></tr>
+<tr><td>elm</td><td>✓</td><td>✓</td><td></td><td><code>elm-language-server</code></td></tr>
+<tr><td>elvish</td><td>✓</td><td></td><td></td><td><code>elvish</code></td></tr>
+<tr><td>env</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td><code>erlang_ls</code></td></tr>
+<tr><td>esdl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>forth</td><td>✓</td><td></td><td></td><td><code>forth-lsp</code></td></tr>
+<tr><td>fortran</td><td>✓</td><td></td><td>✓</td><td><code>fortls</code></td></tr>
+<tr><td>fsharp</td><td>✓</td><td></td><td></td><td><code>fsautocomplete</code></td></tr>
+<tr><td>gas</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>gdscript</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>gemini</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-commit</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>git-config</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td><code>gleam</code></td></tr>
+<tr><td>glsl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>gn</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td><code>gopls</code>, <code>golangci-lint-langserver</code></td></tr>
+<tr><td>godot-resource</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gomod</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
+<tr><td>gotmpl</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
+<tr><td>gowork</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
+<tr><td>graphql</td><td>✓</td><td></td><td></td><td><code>graphql-lsp</code></td></tr>
+<tr><td>hare</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>haskell</td><td>✓</td><td>✓</td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
+<tr><td>haskell-persistent</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
+<tr><td>heex</td><td>✓</td><td>✓</td><td></td><td><code>elixir-ls</code></td></tr>
+<tr><td>hocon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>hosts</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>html</td><td>✓</td><td></td><td></td><td><code>vscode-html-language-server</code></td></tr>
+<tr><td>hurl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>idris</td><td></td><td></td><td></td><td><code>idris2-lsp</code></td></tr>
+<tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ini</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>janet</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>java</td><td>✓</td><td>✓</td><td>✓</td><td><code>jdtls</code></td></tr>
+<tr><td>javascript</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
+<tr><td>jinja</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>json</td><td>✓</td><td></td><td>✓</td><td><code>vscode-json-language-server</code></td></tr>
+<tr><td>json5</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>jsonnet</td><td>✓</td><td></td><td></td><td><code>jsonnet-language-server</code></td></tr>
+<tr><td>jsx</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
+<tr><td>julia</td><td>✓</td><td>✓</td><td>✓</td><td><code>julia</code></td></tr>
+<tr><td>just</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>kdl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>kotlin</td><td>✓</td><td></td><td></td><td><code>kotlin-language-server</code></td></tr>
+<tr><td>latex</td><td>✓</td><td>✓</td><td></td><td><code>texlab</code></td></tr>
+<tr><td>lean</td><td>✓</td><td></td><td></td><td><code>lean</code></td></tr>
+<tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>llvm-mir-yaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>log</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>lpf</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>lua</td><td>✓</td><td>✓</td><td>✓</td><td><code>lua-language-server</code></td></tr>
+<tr><td>make</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>markdoc</td><td>✓</td><td></td><td></td><td><code>markdoc-ls</code></td></tr>
+<tr><td>markdown</td><td>✓</td><td></td><td></td><td><code>marksman</code></td></tr>
+<tr><td>markdown.inline</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>matlab</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>mermaid</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>meson</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>mint</td><td></td><td></td><td></td><td><code>mint</code></td></tr>
+<tr><td>msbuild</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>nasm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>nickel</td><td>✓</td><td></td><td>✓</td><td><code>nls</code></td></tr>
+<tr><td>nim</td><td>✓</td><td>✓</td><td>✓</td><td><code>nimlangserver</code></td></tr>
+<tr><td>nix</td><td>✓</td><td></td><td></td><td><code>nil</code></td></tr>
+<tr><td>nu</td><td>✓</td><td></td><td></td><td><code>nu</code></td></tr>
+<tr><td>nunjucks</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td><code>ocamllsp</code></td></tr>
+<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td><code>ocamllsp</code></td></tr>
+<tr><td>odin</td><td>✓</td><td></td><td>✓</td><td><code>ols</code></td></tr>
+<tr><td>opencl</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
+<tr><td>openscad</td><td>✓</td><td></td><td></td><td><code>openscad-lsp</code></td></tr>
+<tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>pascal</td><td>✓</td><td>✓</td><td></td><td><code>pasls</code></td></tr>
+<tr><td>passwd</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>pem</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>perl</td><td>✓</td><td>✓</td><td>✓</td><td><code>perlnavigator</code></td></tr>
+<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td><code>intelephense</code></td></tr>
+<tr><td>po</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>pod</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ponylang</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>prisma</td><td>✓</td><td></td><td></td><td><code>prisma-language-server</code></td></tr>
+<tr><td>prolog</td><td></td><td></td><td></td><td><code>swipl</code></td></tr>
+<tr><td>protobuf</td><td>✓</td><td>✓</td><td>✓</td><td><code>bufls</code>, <code>pb</code></td></tr>
+<tr><td>prql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>purescript</td><td>✓</td><td>✓</td><td></td><td><code>purescript-language-server</code></td></tr>
+<tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td><code>pylsp</code></td></tr>
+<tr><td>qml</td><td>✓</td><td></td><td>✓</td><td><code>qmlls</code></td></tr>
+<tr><td>r</td><td>✓</td><td></td><td></td><td><code>R</code></td></tr>
+<tr><td>racket</td><td>✓</td><td></td><td>✓</td><td><code>racket</code></td></tr>
+<tr><td>regex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>rego</td><td>✓</td><td></td><td></td><td><code>regols</code></td></tr>
+<tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td><code>rescript-language-server</code></td></tr>
+<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td><code>R</code></td></tr>
+<tr><td>robot</td><td>✓</td><td></td><td></td><td><code>robotframework_ls</code></td></tr>
+<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>rst</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ruby</td><td>✓</td><td>✓</td><td>✓</td><td><code>solargraph</code></td></tr>
+<tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td><code>rust-analyzer</code></td></tr>
+<tr><td>sage</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>scala</td><td>✓</td><td>✓</td><td>✓</td><td><code>metals</code></td></tr>
+<tr><td>scheme</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>scss</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
+<tr><td>slint</td><td>✓</td><td></td><td>✓</td><td><code>slint-lsp</code></td></tr>
+<tr><td>smali</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>smithy</td><td>✓</td><td></td><td></td><td><code>cs</code></td></tr>
+<tr><td>sml</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>solidity</td><td>✓</td><td></td><td></td><td><code>solc</code></td></tr>
+<tr><td>sql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>sshclientconfig</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>starlark</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>strace</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td><code>svelteserver</code></td></tr>
+<tr><td>sway</td><td>✓</td><td>✓</td><td>✓</td><td><code>forc</code></td></tr>
+<tr><td>swift</td><td>✓</td><td></td><td></td><td><code>sourcekit-lsp</code></td></tr>
+<tr><td>t32</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>task</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>templ</td><td>✓</td><td></td><td></td><td><code>templ</code></td></tr>
+<tr><td>tfvars</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
+<tr><td>todotxt</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>toml</td><td>✓</td><td></td><td></td><td><code>taplo</code></td></tr>
+<tr><td>tsq</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>tsx</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
+<tr><td>twig</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>typescript</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
+<tr><td>typst</td><td>✓</td><td></td><td></td><td><code>typst-lsp</code></td></tr>
+<tr><td>ungrammar</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>unison</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>uxntal</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>v</td><td>✓</td><td>✓</td><td>✓</td><td><code>v-analyzer</code></td></tr>
+<tr><td>vala</td><td>✓</td><td></td><td></td><td><code>vala-language-server</code></td></tr>
+<tr><td>verilog</td><td>✓</td><td>✓</td><td></td><td><code>svlangserver</code></td></tr>
+<tr><td>vhdl</td><td>✓</td><td></td><td></td><td><code>vhdl_ls</code></td></tr>
+<tr><td>vhs</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>vue</td><td>✓</td><td></td><td></td><td><code>vue-language-server</code></td></tr>
+<tr><td>wast</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wat</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>webc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wgsl</td><td>✓</td><td></td><td></td><td><code>wgsl_analyzer</code></td></tr>
+<tr><td>wit</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>wren</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>xit</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>xml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td><code>yaml-language-server</code>, <code>ansible-language-server</code></td></tr>
+<tr><td>yuck</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>zig</td><td>✓</td><td>✓</td><td>✓</td><td><code>zls</code></td></tr>
+<tr><td>Language</td><td>Syntax Highlighting</td><td>Treesitter Textobjects</td><td>Auto Indent</td><td>Rainbow Brackets</td></tr>
+<tr><td>---</td><td>---</td><td>---</td><td>---</td><td>---</td></tr>
+<tr><td>astro</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>awk</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>bash</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>bass</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>beancount</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>bibtex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>bicep</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>blueprint</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>c-sharp</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>cabal</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>cairo</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>capnp</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>clojure</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>common-lisp</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>crystal</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>css</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>cue</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>d</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>dart</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>devicetree</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dhall</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>diff</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dockerfile</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dot</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>dtd</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>elixir</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>elm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>elvish</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>env</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
+<tr><td>esdl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>forth</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>fortran</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>fsharp</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gdscript</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>gemini</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-commit</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>git-config</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
+<tr><td>glsl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>godot-resource</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gomod</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gotmpl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gowork</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>graphql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>hare</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>haskell</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>haskell-persistent</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>heex</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>hosts</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>html</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>hurl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>idris</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ini</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>java</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>javascript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>jinja</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>json</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>jsonnet</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>jsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>julia</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>just</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>kdl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>kotlin</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>latex</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>lean</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>llvm-mir-yaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>lua</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>make</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>markdoc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>markdown</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>markdown.inline</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>matlab</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>mermaid</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>meson</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>mint</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>msbuild</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>nasm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>nickel</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>nim</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>nix</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>nu</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>nunjucks</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>odin</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>opencl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>openscad</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>pascal</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>passwd</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>pem</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>perl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>po</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>pod</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ponylang</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>prisma</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>prolog</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>protobuf</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>prql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>purescript</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>qml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>r</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>racket</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>regex</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>rego</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>robot</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>rst</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ruby</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>sage</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>scala</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>scheme</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>scss</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>slint</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>smithy</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>sml</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>solidity</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>sql</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>sshclientconfig</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>starlark</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
+<tr><td>strace</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>sway</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>swift</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>t32</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>task</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>tfvars</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>todotxt</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>toml</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>tsq</td><td>✓</td><td></td><td></td><td>✓</td></tr>
+<tr><td>tsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>twig</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>typescript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>ungrammar</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>unison</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>uxntal</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>v</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>vala</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>verilog</td><td>✓</td><td>✓</td><td></td><td></td></tr>
+<tr><td>vhdl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>vhs</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>vue</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wast</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wat</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>webc</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wgsl</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>wit</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>wren</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>xit</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>xml</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>yuck</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>zig</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="migrating-from-vim"><a class="header" href="#migrating-from-vim">Migrating from Vim</a></h1>
 <p>Helix's editing model is strongly inspired from Vim and Kakoune, and a notable
@@ -1382,6 +1579,8 @@ Its settings will be merged with the configuration directory <code>config.toml</
 <tr><td><code>workspace-lsp-roots</code></td><td>Directories relative to the workspace root that are treated as LSP roots. Should only be set in <code>.helix/config.toml</code></td><td><code>[]</code></td></tr>
 <tr><td><code>default-line-ending</code></td><td>The line ending to use for new documents. Can be <code>native</code>, <code>lf</code>, <code>crlf</code>, <code>ff</code>, <code>cr</code> or <code>nel</code>. <code>native</code> uses the platform's native line ending (<code>crlf</code> on Windows, otherwise <code>lf</code>).</td><td><code>native</code></td></tr>
 <tr><td><code>insert-final-newline</code></td><td>Whether to automatically insert a trailing line-ending on write if missing</td><td><code>true</code></td></tr>
+<tr><td><code>popup-border</code></td><td>Draw border around <code>popup</code>, <code>menu</code>, <code>all</code>, or <code>none</code></td><td><code>none</code></td></tr>
+<tr><td><code>indent-heuristic</code></td><td>How the indentation for a newly inserted line is computed: <code>simple</code> just copies the indentation level from the previous line, <code>tree-sitter</code> computes the indentation based on the syntax tree and <code>hybrid</code> combines both approaches. If the chosen heuristic is not available, a different one will be used as a fallback (the fallback order being <code>hybrid</code> -&gt; <code>tree-sitter</code> -&gt; <code>simple</code>).</td><td><code>hybrid</code></td></tr>
 <tr><td><code>rainbow-brackets</code></td><td>Whether to render rainbow colors for matching brackets. Requires tree-sitter <code>rainbows.scm</code> queries for the language.</td><td><code>false</code></td></tr>
 </tbody></table>
 </div>
@@ -1481,6 +1680,18 @@ not visible in the Helix file picker and global search.</p>
 <tr><td><code>max-depth</code></td><td>Set with an integer value for maximum depth to recurse</td><td>Defaults to <code>None</code>.</td></tr>
 </tbody></table>
 </div>
+<p>Ignore files can be placed locally as <code>.ignore</code> or put in your home directory as <code>~/.ignore</code>. They support the usual ignore and negative ignore (unignore) rules used in <code>.gitignore</code> files.</p>
+<p>Additionally, you can use Helix-specific ignore files by creating a local <code>.helix/ignore</code> file in the current workspace or a global <code>ignore</code> file located in your Helix config directory:</p>
+<ul>
+<li>Linux and Mac: <code>~/.config/helix/ignore</code></li>
+<li>Windows: <code>%AppData%\helix\ignore</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ini"># unignore in file picker and global search
+!.github/
+!.gitignore
+!.gitattributes
+</code></pre>
 <h3 id="editorauto-pairs-section"><a class="header" href="#editorauto-pairs-section"><code>[editor.auto-pairs]</code> Section</a></h3>
 <p>Enables automatic insertion of pairs to parentheses, brackets, etc. Can be a
 simple boolean value, or a specific mapping of pairs of single characters.</p>
@@ -2148,6 +2359,7 @@ language-servers = [ &quot;mylang-lsp&quot; ]
 <tr><td><code>soft-wrap</code></td><td><a href="./configuration.html#editorsoft-wrap-section">editor.softwrap</a></td></tr>
 <tr><td><code>text-width</code></td><td>Maximum line length. Used for the <code>:reflow</code> command and soft-wrapping if <code>soft-wrap.wrap-at-text-width</code> is set, defaults to <code>editor.text-width</code></td></tr>
 <tr><td><code>workspace-lsp-roots</code></td><td>Directories relative to the workspace root that are treated as LSP roots. Should only be set in <code>.helix/config.toml</code>. Overwrites the setting of the same name in <code>config.toml</code> if set.</td></tr>
+<tr><td><code>persistent-diagnostic-sources</code></td><td>An array of LSP diagnostic sources assumed unchanged when the language server resends the same set of diagnostics. Helix can track the position for these diagnostics internally instead. Useful for diagnostics that are recomputed on save.</td></tr>
 <tr><td><code>rulers</code></td><td>Overrides the <code>editor.rulers</code> config key for the language.</td></tr>
 <tr><td><code>rainbow-brackets</code></td><td>Overrides the <code>editor.rainbow-brackets</code> config key for the language.</td></tr>
 </tbody></table>
@@ -2319,6 +2531,7 @@ you will need to add queries.</li>
 <li>Refer to the
 <a href="https://tree-sitter.github.io/tree-sitter/syntax-highlighting#queries">tree-sitter website</a>
 for more information on writing queries.</li>
+<li>A list of highlight captures can be found <a href="https://docs.helix-editor.com/themes.html#scopes">on the themes page</a>.</li>
 </ol>
 <blockquote>
 <p>💡 In Helix, the first matching query takes precedence when evaluating
@@ -2335,6 +2548,7 @@ to fetch the grammars and <code>hx --grammar build</code> to build any out-of-da
 grammars.</li>
 <li>If a parser is causing a segfault, or you want to remove it, make sure to
 remove the compiled parser located at <code>runtime/grammars/&lt;name&gt;.so</code>.</li>
+<li>If you are attempting to add queries and Helix is unable to locate them, ensure that the environment variable <code>HELIX_RUNTIME</code> is set to the location of the <code>runtime</code> folder you're developing in.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="adding-textobject-queries"><a class="header" href="#adding-textobject-queries">Adding textobject queries</a></h1>
 <p>Helix supports textobjects that are language specific, such as functions, classes, etc.
@@ -2383,6 +2597,14 @@ the capture.</p>
 <p>Note that it matters where these added indents begin. For example,
 multiple indent level increases that start on the same line only increase
 the total indent level by 1. See <a href="guides/indent.html#capture-types">Capture types</a>.</p>
+<p>By default, Helix uses the <code>hybrid</code> indentation heuristic. This means that
+indent queries are not used to compute the expected absolute indentation of a
+line but rather the expected difference in indentation between the new and an
+already existing line. This difference is then added to the actual indentation
+of the already existing line. Since this makes errors in the indent queries
+harder to find, it is recommended to disable it when testing via
+<code>:set indent-heuristic tree-sitter</code>. The rest of this guide assumes that
+the <code>tree-sitter</code> heuristic is used.</p>
 <h2 id="indent-queries"><a class="header" href="#indent-queries">Indent queries</a></h2>
 <p>When Helix is inserting a new line through <code>o</code>, <code>O</code>, or <code>&lt;ret&gt;</code>, to determine
 the indent level for the new line, the query in <code>indents.scm</code> is run on the
