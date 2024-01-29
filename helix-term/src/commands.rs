@@ -1681,6 +1681,7 @@ pub fn scroll(cx: &mut Context, offset: usize, direction: Direction, sync_cursor
                 &mut annotations,
             )
         });
+        drop(annotations);
         doc.set_selection(view.id, selection);
         return;
     }
