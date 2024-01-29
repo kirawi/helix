@@ -97,7 +97,6 @@ impl Serialize for Mode {
         serializer.collect_str(self)
     }
 }
-
 /// A snapshot of the text of a document that we want to write out to disk
 #[derive(Debug, Clone)]
 pub struct DocumentSavedEvent {
@@ -1292,7 +1291,7 @@ impl Document {
                 true
             });
 
-            self.diagnostics.sort_unstable_by_key(|diagnostic| {
+            self.diagnostics.sort_by_key(|diagnostic| {
                 (
                     diagnostic.range,
                     diagnostic.severity,
@@ -1872,7 +1871,7 @@ impl Document {
             });
         }
         self.diagnostics.extend(diagnostics);
-        self.diagnostics.sort_unstable_by_key(|diagnostic| {
+        self.diagnostics.sort_by_key(|diagnostic| {
             (
                 diagnostic.range,
                 diagnostic.severity,
