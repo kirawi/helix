@@ -359,10 +359,10 @@ the <code>runtime</code> directory within the user's helix config directory (mor
 </blockquote>
 <h3 id="configuring-helixs-runtime-files"><a class="header" href="#configuring-helixs-runtime-files">Configuring Helix's runtime files</a></h3>
 <h4 id="linux-and-macos"><a class="header" href="#linux-and-macos">Linux and macOS</a></h4>
-<p>The <strong>runtime</strong> directory is one below the Helix source, so either set a
+<p>The <strong>runtime</strong> directory is one below the Helix source, so either export a
 <code>HELIX_RUNTIME</code> environment variable to point to that directory and add it to
 your <code>~/.bashrc</code> or equivalent:</p>
-<pre><code class="language-sh">HELIX_RUNTIME=~/src/helix/runtime
+<pre><code class="language-sh">export HELIX_RUNTIME=~/src/helix/runtime
 </code></pre>
 <p>Or, create a symbolic link:</p>
 <pre><code class="language-sh">ln -Ts $PWD/runtime ~/.config/helix/runtime
@@ -1133,383 +1133,202 @@ appropriate Language Server.</p>
 <p>You can check the language support in your installed helix version with <code>hx --health</code>.</p>
 <p>Also see the <a href="./languages.html">Language Configuration</a> docs and the <a href="./guides/adding_languages.html">Adding
 Languages</a> guide for more language configuration information.</p>
-<div class="table-wrapper"><table><thead><tr><th>Language</th><th>Syntax Highlighting</th><th>Treesitter Textobjects</th><th>Auto Indent</th><th>Default LSP</th></tr></thead><tbody>
-<tr><td>agda</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>astro</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>awk</td><td>✓</td><td>✓</td><td></td><td><code>awk-language-server</code></td></tr>
-<tr><td>bash</td><td>✓</td><td>✓</td><td>✓</td><td><code>bash-language-server</code></td></tr>
-<tr><td>bass</td><td>✓</td><td></td><td></td><td><code>bass</code></td></tr>
-<tr><td>beancount</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>bibtex</td><td>✓</td><td></td><td></td><td><code>texlab</code></td></tr>
-<tr><td>bicep</td><td>✓</td><td></td><td></td><td><code>bicep-langserver</code></td></tr>
-<tr><td>blueprint</td><td>✓</td><td></td><td></td><td><code>blueprint-compiler</code></td></tr>
-<tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>c-sharp</td><td>✓</td><td>✓</td><td></td><td><code>OmniSharp</code></td></tr>
-<tr><td>cabal</td><td></td><td></td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
-<tr><td>cairo</td><td>✓</td><td>✓</td><td>✓</td><td><code>cairo-language-server</code></td></tr>
-<tr><td>capnp</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>clojure</td><td>✓</td><td></td><td></td><td><code>clojure-lsp</code></td></tr>
-<tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td><code>cmake-language-server</code></td></tr>
-<tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>common-lisp</td><td>✓</td><td></td><td>✓</td><td><code>cl-lsp</code></td></tr>
-<tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>crystal</td><td>✓</td><td>✓</td><td></td><td><code>crystalline</code></td></tr>
-<tr><td>css</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
-<tr><td>cue</td><td>✓</td><td></td><td></td><td><code>cuelsp</code></td></tr>
-<tr><td>d</td><td>✓</td><td>✓</td><td>✓</td><td><code>serve-d</code></td></tr>
-<tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
-<tr><td>dbml</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>devicetree</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dhall</td><td>✓</td><td>✓</td><td></td><td><code>dhall-lsp-server</code></td></tr>
-<tr><td>diff</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
-<tr><td>dot</td><td>✓</td><td></td><td></td><td><code>dot-language-server</code></td></tr>
-<tr><td>dtd</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>elixir</td><td>✓</td><td>✓</td><td>✓</td><td><code>elixir-ls</code></td></tr>
-<tr><td>elm</td><td>✓</td><td>✓</td><td></td><td><code>elm-language-server</code></td></tr>
-<tr><td>elvish</td><td>✓</td><td></td><td></td><td><code>elvish</code></td></tr>
-<tr><td>env</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td><code>erlang_ls</code></td></tr>
-<tr><td>esdl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>forth</td><td>✓</td><td></td><td></td><td><code>forth-lsp</code></td></tr>
-<tr><td>fortran</td><td>✓</td><td></td><td>✓</td><td><code>fortls</code></td></tr>
-<tr><td>fsharp</td><td>✓</td><td></td><td></td><td><code>fsautocomplete</code></td></tr>
-<tr><td>gas</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>gdscript</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>gemini</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-commit</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>git-config</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td><code>gleam</code></td></tr>
-<tr><td>glsl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>gn</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td><code>gopls</code>, <code>golangci-lint-langserver</code></td></tr>
-<tr><td>godot-resource</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gomod</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>gotmpl</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>gowork</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
-<tr><td>graphql</td><td>✓</td><td></td><td></td><td><code>graphql-lsp</code></td></tr>
-<tr><td>hare</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>haskell</td><td>✓</td><td>✓</td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
-<tr><td>haskell-persistent</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
-<tr><td>heex</td><td>✓</td><td>✓</td><td></td><td><code>elixir-ls</code></td></tr>
-<tr><td>hocon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>hosts</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>html</td><td>✓</td><td></td><td></td><td><code>vscode-html-language-server</code></td></tr>
-<tr><td>hurl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>idris</td><td></td><td></td><td></td><td><code>idris2-lsp</code></td></tr>
-<tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ini</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>janet</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>java</td><td>✓</td><td>✓</td><td>✓</td><td><code>jdtls</code></td></tr>
-<tr><td>javascript</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>jinja</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>json</td><td>✓</td><td></td><td>✓</td><td><code>vscode-json-language-server</code></td></tr>
-<tr><td>json5</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>jsonnet</td><td>✓</td><td></td><td></td><td><code>jsonnet-language-server</code></td></tr>
-<tr><td>jsx</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>julia</td><td>✓</td><td>✓</td><td>✓</td><td><code>julia</code></td></tr>
-<tr><td>just</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>kdl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>kotlin</td><td>✓</td><td></td><td></td><td><code>kotlin-language-server</code></td></tr>
-<tr><td>latex</td><td>✓</td><td>✓</td><td></td><td><code>texlab</code></td></tr>
-<tr><td>lean</td><td>✓</td><td></td><td></td><td><code>lean</code></td></tr>
-<tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>llvm-mir-yaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>log</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>lpf</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>lua</td><td>✓</td><td>✓</td><td>✓</td><td><code>lua-language-server</code></td></tr>
-<tr><td>make</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>markdoc</td><td>✓</td><td></td><td></td><td><code>markdoc-ls</code></td></tr>
-<tr><td>markdown</td><td>✓</td><td></td><td></td><td><code>marksman</code></td></tr>
-<tr><td>markdown.inline</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>matlab</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>mermaid</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>meson</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>mint</td><td></td><td></td><td></td><td><code>mint</code></td></tr>
-<tr><td>msbuild</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>nasm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>nickel</td><td>✓</td><td></td><td>✓</td><td><code>nls</code></td></tr>
-<tr><td>nim</td><td>✓</td><td>✓</td><td>✓</td><td><code>nimlangserver</code></td></tr>
-<tr><td>nix</td><td>✓</td><td></td><td></td><td><code>nil</code></td></tr>
-<tr><td>nu</td><td>✓</td><td></td><td></td><td><code>nu</code></td></tr>
-<tr><td>nunjucks</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td><code>ocamllsp</code></td></tr>
-<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td><code>ocamllsp</code></td></tr>
-<tr><td>odin</td><td>✓</td><td></td><td>✓</td><td><code>ols</code></td></tr>
-<tr><td>opencl</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>openscad</td><td>✓</td><td></td><td></td><td><code>openscad-lsp</code></td></tr>
-<tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>pascal</td><td>✓</td><td>✓</td><td></td><td><code>pasls</code></td></tr>
-<tr><td>passwd</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>pem</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>perl</td><td>✓</td><td>✓</td><td>✓</td><td><code>perlnavigator</code></td></tr>
-<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td><code>intelephense</code></td></tr>
-<tr><td>po</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>pod</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ponylang</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>prisma</td><td>✓</td><td></td><td></td><td><code>prisma-language-server</code></td></tr>
-<tr><td>prolog</td><td></td><td></td><td></td><td><code>swipl</code></td></tr>
-<tr><td>protobuf</td><td>✓</td><td>✓</td><td>✓</td><td><code>bufls</code>, <code>pb</code></td></tr>
-<tr><td>prql</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>purescript</td><td>✓</td><td>✓</td><td></td><td><code>purescript-language-server</code></td></tr>
-<tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td><code>pylsp</code></td></tr>
-<tr><td>qml</td><td>✓</td><td></td><td>✓</td><td><code>qmlls</code></td></tr>
-<tr><td>r</td><td>✓</td><td></td><td></td><td><code>R</code></td></tr>
-<tr><td>racket</td><td>✓</td><td></td><td>✓</td><td><code>racket</code></td></tr>
-<tr><td>regex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>rego</td><td>✓</td><td></td><td></td><td><code>regols</code></td></tr>
-<tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td><code>rescript-language-server</code></td></tr>
-<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td><code>R</code></td></tr>
-<tr><td>robot</td><td>✓</td><td></td><td></td><td><code>robotframework_ls</code></td></tr>
-<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>rst</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ruby</td><td>✓</td><td>✓</td><td>✓</td><td><code>solargraph</code></td></tr>
-<tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td><code>rust-analyzer</code></td></tr>
-<tr><td>sage</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>scala</td><td>✓</td><td>✓</td><td>✓</td><td><code>metals</code></td></tr>
-<tr><td>scheme</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>scss</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
-<tr><td>slint</td><td>✓</td><td></td><td>✓</td><td><code>slint-lsp</code></td></tr>
-<tr><td>smali</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>smithy</td><td>✓</td><td></td><td></td><td><code>cs</code></td></tr>
-<tr><td>sml</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>solidity</td><td>✓</td><td></td><td></td><td><code>solc</code></td></tr>
-<tr><td>sql</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>sshclientconfig</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>starlark</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>strace</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td><code>svelteserver</code></td></tr>
-<tr><td>sway</td><td>✓</td><td>✓</td><td>✓</td><td><code>forc</code></td></tr>
-<tr><td>swift</td><td>✓</td><td></td><td></td><td><code>sourcekit-lsp</code></td></tr>
-<tr><td>t32</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>task</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>templ</td><td>✓</td><td></td><td></td><td><code>templ</code></td></tr>
-<tr><td>tfvars</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
-<tr><td>todotxt</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>toml</td><td>✓</td><td></td><td></td><td><code>taplo</code></td></tr>
-<tr><td>tsq</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>tsx</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>twig</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>typescript</td><td>✓</td><td>✓</td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>typst</td><td>✓</td><td></td><td></td><td><code>typst-lsp</code></td></tr>
-<tr><td>ungrammar</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>unison</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>uxntal</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>v</td><td>✓</td><td>✓</td><td>✓</td><td><code>v-analyzer</code></td></tr>
-<tr><td>vala</td><td>✓</td><td></td><td></td><td><code>vala-language-server</code></td></tr>
-<tr><td>verilog</td><td>✓</td><td>✓</td><td></td><td><code>svlangserver</code></td></tr>
-<tr><td>vhdl</td><td>✓</td><td></td><td></td><td><code>vhdl_ls</code></td></tr>
-<tr><td>vhs</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>vue</td><td>✓</td><td></td><td></td><td><code>vue-language-server</code></td></tr>
-<tr><td>wast</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wat</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>webc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wgsl</td><td>✓</td><td></td><td></td><td><code>wgsl_analyzer</code></td></tr>
-<tr><td>wit</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>wren</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>xit</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>xml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td><code>yaml-language-server</code>, <code>ansible-language-server</code></td></tr>
-<tr><td>yuck</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>zig</td><td>✓</td><td>✓</td><td>✓</td><td><code>zls</code></td></tr>
-<tr><td>Language</td><td>Syntax Highlighting</td><td>Treesitter Textobjects</td><td>Auto Indent</td><td>Rainbow Brackets</td></tr>
-<tr><td>---</td><td>---</td><td>---</td><td>---</td><td>---</td></tr>
-<tr><td>astro</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>awk</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>bash</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>bass</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>beancount</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>bibtex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>bicep</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>blueprint</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>c-sharp</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>cabal</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>cairo</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>capnp</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>clojure</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>common-lisp</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>crystal</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>css</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>cue</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>d</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>dart</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>devicetree</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dhall</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>diff</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dockerfile</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dot</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>dtd</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>elixir</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>elm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>elvish</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>env</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
-<tr><td>esdl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>forth</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>fortran</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>fsharp</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gdscript</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>gemini</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-commit</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>git-config</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
-<tr><td>glsl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>godot-resource</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gomod</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gotmpl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gowork</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>graphql</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>hare</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>haskell</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>haskell-persistent</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>heex</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>hosts</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>html</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>hurl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>idris</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ini</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>java</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>javascript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>jinja</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>json</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
-<tr><td>jsonnet</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>jsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>julia</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>just</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>kdl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>kotlin</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>latex</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>lean</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>llvm-mir</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>llvm-mir-yaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>lua</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>make</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>markdoc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>markdown</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>markdown.inline</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>matlab</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>mermaid</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>meson</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>mint</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>msbuild</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>nasm</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>nickel</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>nim</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>nix</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>nu</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>nunjucks</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>odin</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>opencl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>openscad</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>pascal</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>passwd</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>pem</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>perl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>po</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>pod</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ponylang</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>prisma</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>prolog</td><td></td><td></td><td></td><td></td></tr>
-<tr><td>protobuf</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>prql</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>purescript</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>qml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>r</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>racket</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>regex</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>rego</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>robot</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>rst</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>ruby</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>sage</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>scala</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>scheme</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>scss</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>slint</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>smithy</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>sml</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>solidity</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>sql</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>sshclientconfig</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>starlark</td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
-<tr><td>strace</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>sway</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>swift</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>t32</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>task</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>tfvars</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>todotxt</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>toml</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>tsq</td><td>✓</td><td></td><td></td><td>✓</td></tr>
-<tr><td>tsx</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>twig</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>typescript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>ungrammar</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>unison</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>uxntal</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>v</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>vala</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>verilog</td><td>✓</td><td>✓</td><td></td><td></td></tr>
-<tr><td>vhdl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>vhs</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>vue</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wast</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wat</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>webc</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wgsl</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>wit</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>wren</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>xit</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>xml</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
-<tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td>✓</td></tr>
-<tr><td>yuck</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>zig</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-</tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="migrating-from-vim"><a class="header" href="#migrating-from-vim">Migrating from Vim</a></h1>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+| Language | Syntax Highlighting | Treesitter Textobjects | Auto Indent | Default LSP |
+| --- | --- | --- | --- | --- |
+| agda | ✓ |  |  |  |
+| astro | ✓ |  |  |  |
+| awk | ✓ | ✓ |  | <code>awk-language-server</code> |
+| bash | ✓ | ✓ | ✓ | <code>bash-language-server</code> |
+| bass | ✓ |  |  | <code>bass</code> |
+| beancount | ✓ |  |  |  |
+| bibtex | ✓ |  |  | <code>texlab</code> |
+| bicep | ✓ |  |  | <code>bicep-langserver</code> |
+| blueprint | ✓ |  |  | <code>blueprint-compiler</code> |
+| c | ✓ | ✓ | ✓ | <code>clangd</code> |
+| c-sharp | ✓ | ✓ |  | <code>OmniSharp</code> |
+| cabal |  |  |  | <code>haskell-language-server-wrapper</code> |
+| cairo | ✓ | ✓ | ✓ | <code>cairo-language-server</code> |
+| capnp | ✓ |  | ✓ |  |
+| clojure | ✓ |  |  | <code>clojure-lsp</code> |
+| cmake | ✓ | ✓ | ✓ | <code>cmake-language-server</code> |
+| comment | ✓ |  |  |  |
+| common-lisp | ✓ |  | ✓ | <code>cl-lsp</code> |
+| cpon | ✓ |  | ✓ |  |
+| cpp | ✓ | ✓ | ✓ | <code>clangd</code> |
+| crystal | ✓ | ✓ |  | <code>crystalline</code> |
+| css | ✓ |  | ✓ | <code>vscode-css-language-server</code> |
+| cue | ✓ |  |  | <code>cuelsp</code> |
+| d | ✓ | ✓ | ✓ | <code>serve-d</code> |
+| dart | ✓ | ✓ | ✓ | <code>dart</code> |
+| dbml | ✓ |  |  |  |
+| devicetree | ✓ |  |  |  |
+| dhall | ✓ | ✓ |  | <code>dhall-lsp-server</code> |
+| diff | ✓ |  |  |  |
+| dockerfile | ✓ |  |  | <code>docker-langserver</code> |
+| dot | ✓ |  |  | <code>dot-language-server</code> |
+| dtd | ✓ |  |  |  |
+| edoc | ✓ |  |  |  |
+| eex | ✓ |  |  |  |
+| ejs | ✓ |  |  |  |
+| elixir | ✓ | ✓ | ✓ | <code>elixir-ls</code> |
+| elm | ✓ | ✓ |  | <code>elm-language-server</code> |
+| elvish | ✓ |  |  | <code>elvish</code> |
+| env | ✓ |  |  |  |
+| erb | ✓ |  |  |  |
+| erlang | ✓ | ✓ |  | <code>erlang_ls</code> |
+| esdl | ✓ |  |  |  |
+| fish | ✓ | ✓ | ✓ |  |
+| forth | ✓ |  |  | <code>forth-lsp</code> |
+| fortran | ✓ |  | ✓ | <code>fortls</code> |
+| fsharp | ✓ |  |  | <code>fsautocomplete</code> |
+| gas | ✓ | ✓ |  |  |
+| gdscript | ✓ | ✓ | ✓ |  |
+| gemini | ✓ |  |  |  |
+| git-attributes | ✓ |  |  |  |
+| git-commit | ✓ | ✓ |  |  |
+| git-config | ✓ |  |  |  |
+| git-ignore | ✓ |  |  |  |
+| git-rebase | ✓ |  |  |  |
+| gleam | ✓ | ✓ |  | <code>gleam</code> |
+| glsl | ✓ | ✓ | ✓ |  |
+| gn | ✓ |  |  |  |
+| go | ✓ | ✓ | ✓ | <code>gopls</code>, <code>golangci-lint-langserver</code> |
+| godot-resource | ✓ |  |  |  |
+| gomod | ✓ |  |  | <code>gopls</code> |
+| gotmpl | ✓ |  |  | <code>gopls</code> |
+| gowork | ✓ |  |  | <code>gopls</code> |
+| graphql | ✓ |  |  | <code>graphql-lsp</code> |
+| hare | ✓ |  |  |  |
+| haskell | ✓ | ✓ |  | <code>haskell-language-server-wrapper</code> |
+| haskell-persistent | ✓ |  |  |  |
+| hcl | ✓ |  | ✓ | <code>terraform-ls</code> |
+| heex | ✓ | ✓ |  | <code>elixir-ls</code> |
+| hocon | ✓ |  | ✓ |  |
+| hosts | ✓ |  |  |  |
+| html | ✓ |  |  | <code>vscode-html-language-server</code> |
+| hurl | ✓ |  | ✓ |  |
+| idris |  |  |  | <code>idris2-lsp</code> |
+| iex | ✓ |  |  |  |
+| ini | ✓ |  |  |  |
+| janet | ✓ |  |  |  |
+| java | ✓ | ✓ | ✓ | <code>jdtls</code> |
+| javascript | ✓ | ✓ | ✓ | <code>typescript-language-server</code> |
+| jinja | ✓ |  |  |  |
+| jsdoc | ✓ |  |  |  |
+| json | ✓ |  | ✓ | <code>vscode-json-language-server</code> |
+| json5 | ✓ |  |  |  |
+| jsonnet | ✓ |  |  | <code>jsonnet-language-server</code> |
+| jsx | ✓ | ✓ | ✓ | <code>typescript-language-server</code> |
+| julia | ✓ | ✓ | ✓ | <code>julia</code> |
+| just | ✓ | ✓ | ✓ |  |
+| kdl | ✓ | ✓ | ✓ |  |
+| kotlin | ✓ |  |  | <code>kotlin-language-server</code> |
+| latex | ✓ | ✓ |  | <code>texlab</code> |
+| lean | ✓ |  |  | <code>lean</code> |
+| ledger | ✓ |  |  |  |
+| llvm | ✓ | ✓ | ✓ |  |
+| llvm-mir | ✓ | ✓ | ✓ |  |
+| llvm-mir-yaml | ✓ |  | ✓ |  |
+| log | ✓ |  |  |  |
+| lpf | ✓ |  |  |  |
+| lua | ✓ | ✓ | ✓ | <code>lua-language-server</code> |
+| make | ✓ |  | ✓ |  |
+| markdoc | ✓ |  |  | <code>markdoc-ls</code> |
+| markdown | ✓ |  |  | <code>marksman</code> |
+| markdown.inline | ✓ |  |  |  |
+| matlab | ✓ | ✓ | ✓ |  |
+| mermaid | ✓ |  |  |  |
+| meson | ✓ |  | ✓ |  |
+| mint |  |  |  | <code>mint</code> |
+| msbuild | ✓ |  | ✓ |  |
+| nasm | ✓ | ✓ |  |  |
+| nickel | ✓ |  | ✓ | <code>nls</code> |
+| nim | ✓ | ✓ | ✓ | <code>nimlangserver</code> |
+| nix | ✓ |  |  | <code>nil</code> |
+| nu | ✓ |  |  | <code>nu</code> |
+| nunjucks | ✓ |  |  |  |
+| ocaml | ✓ |  | ✓ | <code>ocamllsp</code> |
+| ocaml-interface | ✓ |  |  | <code>ocamllsp</code> |
+| odin | ✓ |  | ✓ | <code>ols</code> |
+| opencl | ✓ | ✓ | ✓ | <code>clangd</code> |
+| openscad | ✓ |  |  | <code>openscad-lsp</code> |
+| org | ✓ |  |  |  |
+| pascal | ✓ | ✓ |  | <code>pasls</code> |
+| passwd | ✓ |  |  |  |
+| pem | ✓ |  |  |  |
+| perl | ✓ | ✓ | ✓ | <code>perlnavigator</code> |
+| php | ✓ | ✓ | ✓ | <code>intelephense</code> |
+| po | ✓ | ✓ |  |  |
+| pod | ✓ |  |  |  |
+| ponylang | ✓ | ✓ | ✓ |  |
+| prisma | ✓ |  |  | <code>prisma-language-server</code> |
+| prolog |  |  |  | <code>swipl</code> |
+| protobuf | ✓ | ✓ | ✓ | <code>bufls</code>, <code>pb</code> |
+| prql | ✓ |  |  |  |
+| purescript | ✓ | ✓ |  | <code>purescript-language-server</code> |
+| python | ✓ | ✓ | ✓ | <code>pylsp</code> |
+| qml | ✓ |  | ✓ | <code>qmlls</code> |
+| r | ✓ |  |  | <code>R</code> |
+| racket | ✓ |  | ✓ | <code>racket</code> |
+| regex | ✓ |  |  |  |
+| rego | ✓ |  |  | <code>regols</code> |
+| rescript | ✓ | ✓ |  | <code>rescript-language-server</code> |
+| rmarkdown | ✓ |  | ✓ | <code>R</code> |
+| robot | ✓ |  |  | <code>robotframework_ls</code> |
+| ron | ✓ |  | ✓ |  |
+| rst | ✓ |  |  |  |
+| ruby | ✓ | ✓ | ✓ | <code>solargraph</code> |
+| rust | ✓ | ✓ | ✓ | <code>rust-analyzer</code> |
+| sage | ✓ | ✓ |  |  |
+| scala | ✓ | ✓ | ✓ | <code>metals</code> |
+| scheme | ✓ |  | ✓ |  |
+| scss | ✓ |  |  | <code>vscode-css-language-server</code> |
+| slint | ✓ |  | ✓ | <code>slint-lsp</code> |
+| smali | ✓ |  | ✓ |  |
+| smithy | ✓ |  |  | <code>cs</code> |
+| sml | ✓ |  |  |  |
+| solidity | ✓ |  |  | <code>solc</code> |
+| sql | ✓ |  |  |  |
+| sshclientconfig | ✓ |  |  |  |
+| starlark | ✓ | ✓ |  |  |
+| strace | ✓ |  |  |  |
+| svelte | ✓ |  | ✓ | <code>svelteserver</code> |
+| sway | ✓ | ✓ | ✓ | <code>forc</code> |
+| swift | ✓ |  |  | <code>sourcekit-lsp</code> |
+| t32 | ✓ |  |  |  |
+| tablegen | ✓ | ✓ | ✓ |  |
+| task | ✓ |  |  |  |
+| templ | ✓ |  |  | <code>templ</code> |
+| tfvars | ✓ |  | ✓ | <code>terraform-ls</code> |
+| todotxt | ✓ |  |  |  |
+| toml | ✓ |  |  | <code>taplo</code> |
+| tsq | ✓ |  |  |  |
+| tsx | ✓ | ✓ | ✓ | <code>typescript-language-server</code> |
+| twig | ✓ |  |  |  |
+| typescript | ✓ | ✓ | ✓ | <code>typescript-language-server</code> |
+| typst | ✓ |  |  | <code>typst-lsp</code> |
+| ungrammar | ✓ |  |  |  |
+| unison | ✓ |  |  |  |
+| uxntal | ✓ |  |  |  |
+| v | ✓ | ✓ | ✓ | <code>v-analyzer</code> |
+| vala | ✓ |  |  | <code>vala-language-server</code> |
+| verilog | ✓ | ✓ |  | <code>svlangserver</code> |
+| vhdl | ✓ |  |  | <code>vhdl_ls</code> |
+| vhs | ✓ |  |  |  |
+| vue | ✓ |  |  | <code>vue-language-server</code> |
+| wast | ✓ |  |  |  |
+| wat | ✓ |  |  |  |
+| webc | ✓ |  |  |  |
+| wgsl | ✓ |  |  | <code>wgsl_analyzer</code> |
+| wit | ✓ |  | ✓ |  |
+| wren | ✓ | ✓ | ✓ |  |
+| xit | ✓ |  |  |  |
+| xml | ✓ |  | ✓ |  |
+| yaml | ✓ |  | ✓ | <code>yaml-language-server</code>, <code>ansible-language-server</code> |
+| yuck | ✓ |  |  |  |
+| zig | ✓ | ✓ | ✓ | <code>zls</code> |</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="migrating-from-vim"><a class="header" href="#migrating-from-vim">Migrating from Vim</a></h1>
 <p>Helix's editing model is strongly inspired from Vim and Kakoune, and a notable
 difference from Vim (and the most striking similarity to Kakoune) is that Helix
 follows the <code>selection → action</code> model. This means that whatever you are
@@ -1565,7 +1384,8 @@ Its settings will be merged with the configuration directory <code>config.toml</
 <tr><td><code>auto-completion</code></td><td>Enable automatic pop up of auto-completion</td><td><code>true</code></td></tr>
 <tr><td><code>auto-format</code></td><td>Enable automatic formatting on save</td><td><code>true</code></td></tr>
 <tr><td><code>auto-save</code></td><td>Enable automatic saving on the focus moving away from Helix. Requires <a href="https://github.com/helix-editor/helix/wiki/Terminal-Support">focus event support</a> from your terminal</td><td><code>false</code></td></tr>
-<tr><td><code>idle-timeout</code></td><td>Time in milliseconds since last keypress before idle timers trigger. Used for autocompletion, set to 0 for instant</td><td><code>250</code></td></tr>
+<tr><td><code>idle-timeout</code></td><td>Time in milliseconds since last keypress before idle timers trigger.</td><td><code>250</code></td></tr>
+<tr><td><code>completion-timeout</code></td><td>Time in milliseconds after typing a word character before completions are shown, set to 5 for instant.</td><td><code>250</code></td></tr>
 <tr><td><code>preview-completion-insert</code></td><td>Whether to apply completion item instantly when selected</td><td><code>true</code></td></tr>
 <tr><td><code>completion-trigger-len</code></td><td>The min-length of word under cursor to trigger autocompletion</td><td><code>2</code></td></tr>
 <tr><td><code>completion-replace</code></td><td>Set to <code>true</code> to make completions always replace the entire word and not just the part before the cursor</td><td><code>false</code></td></tr>
@@ -2196,7 +2016,7 @@ The key is a list of styles.</p>
 <tr><td><code>ui.popup.info</code></td><td>Prompt for multiple key options</td></tr>
 <tr><td><code>ui.window</code></td><td>Borderlines separating splits</td></tr>
 <tr><td><code>ui.help</code></td><td>Description box for commands</td></tr>
-<tr><td><code>ui.text</code></td><td>Command prompts, popup text, etc.</td></tr>
+<tr><td><code>ui.text</code></td><td>Default text style, command prompts, popup text, etc.</td></tr>
 <tr><td><code>ui.text.focus</code></td><td>The currently selected line in the picker</td></tr>
 <tr><td><code>ui.text.inactive</code></td><td>Same as <code>ui.text</code> but when the text is inactive (e.g. suggestions)</td></tr>
 <tr><td><code>ui.text.info</code></td><td>The key: command text in <code>ui.popup.info</code> boxes</td></tr>
@@ -2860,6 +2680,11 @@ The first argument (a capture) must/must not be equal to the second argument
 The first argument (a capture) must/must not match the regex given in the
 second argument (a string).</p>
 </li>
+<li>
+<p><code>#any-of?</code>/<code>#not-any-of?</code>:
+The first argument (a capture) must/must not be one of the other arguments
+(strings).</p>
+</li>
 </ul>
 <p>Additionally, we support some custom predicates for indent queries:</p>
 <ul>
@@ -2975,6 +2800,10 @@ The first argument (a capture) must be equal to the second argument
 <p><code>#match?</code> (standard):
 The first argument (a capture) must match the regex given in the
 second argument (a string).</p>
+</li>
+<li>
+<p><code>#any-of?</code> (standard):
+The first argument (a capture) must be one of the other arguments (strings).</p>
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="adding-rainbow-bracket-queries"><a class="header" href="#adding-rainbow-bracket-queries">Adding Rainbow Bracket Queries</a></h1>
