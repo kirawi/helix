@@ -360,6 +360,8 @@ pub struct Config {
     pub end_of_line_diagnostics: DiagnosticFilter,
     // Set to override the default clipboard provider
     pub clipboard_provider: ClipboardProvider,
+    /// Whether to render rainbow highlights. Defaults to `false`.
+    pub rainbow_brackets: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, PartialOrd, Ord)]
@@ -1001,6 +1003,7 @@ impl Default for Config {
             inline_diagnostics: InlineDiagnosticsConfig::default(),
             end_of_line_diagnostics: DiagnosticFilter::Disable,
             clipboard_provider: ClipboardProvider::default(),
+            rainbow_brackets: false,
         }
     }
 }
@@ -1342,8 +1345,9 @@ impl Editor {
             return;
         }
 
-        let scopes = theme.scopes();
-        (*self.syn_loader).load().set_scopes(scopes.to_vec());
+        (*self.syn_loader)
+            .load()
+            .set_scopes(theme.scopes().to_vec());
 
         match preview {
             ThemeAction::Preview => {
