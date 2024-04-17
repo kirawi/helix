@@ -386,8 +386,8 @@ impl EditorView {
         let mut spans = syntax.rainbow_spans(text, Some(syntax_node_range), theme.rainbow_length());
 
         for (_highlight, range) in spans.iter_mut() {
-            let start = text.byte_to_char(ensure_grapheme_boundary_next_byte(text, range.start));
-            let end = text.byte_to_char(ensure_grapheme_boundary_next_byte(text, range.end));
+            let start = text.byte_to_char(range.start);
+            let end = text.byte_to_char(range.end);
 
             *range = start..end;
         }
