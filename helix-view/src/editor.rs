@@ -1240,7 +1240,8 @@ impl Editor {
             return;
         }
 
-        self.syn_loader.set_scopes(theme.scopes().to_vec());
+        let loader = arc_swap::ArcSwapAny::load(&self.syn_loader);
+        loader.set_scopes(theme.scopes().to_vec());
 
         match preview {
             ThemeAction::Preview => {
