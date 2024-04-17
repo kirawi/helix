@@ -284,7 +284,8 @@ pub mod util {
                 .chars_at(cursor)
                 .skip(1)
                 .take_while(|ch| chars::char_is_word(*ch))
-                .count();
+                .count()
+                + 1;
         }
         (start, end)
     }
@@ -539,6 +540,16 @@ pub mod util {
                 } else {
                     return (0, 0, None);
                 };
+
+                if start > end {
+                    log::error!(
+                        "Invalid LSP text edit start {:?} > end {:?}, discarding",
+                        start,
+                        end
+                    );
+                    return (0, 0, None);
+                }
+
                 (start, end, replacement)
             }),
         )

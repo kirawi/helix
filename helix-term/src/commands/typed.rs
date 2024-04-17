@@ -7,9 +7,9 @@ use super::*;
 
 use helix_core::fuzzy::fuzzy_match;
 use helix_core::indent::MAX_INDENT;
-use helix_core::{encoding, line_ending, shellwords::Shellwords};
+use helix_core::{line_ending, shellwords::Shellwords};
 use helix_view::document::DEFAULT_LANGUAGE_NAME;
-use helix_view::editor::{Action, CloseError, ConfigEvent};
+use helix_view::editor::{CloseError, ConfigEvent};
 use serde_json::Value;
 use ui::completers::{self, Completer};
 
@@ -309,7 +309,7 @@ fn buffer_next(
         return Ok(());
     }
 
-    goto_buffer(cx.editor, Direction::Forward);
+    goto_buffer(cx.editor, Direction::Forward, 1);
     Ok(())
 }
 
@@ -322,7 +322,7 @@ fn buffer_previous(
         return Ok(());
     }
 
-    goto_buffer(cx.editor, Direction::Backward);
+    goto_buffer(cx.editor, Direction::Backward, 1);
     Ok(())
 }
 
