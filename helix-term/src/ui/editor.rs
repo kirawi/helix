@@ -21,6 +21,7 @@ use helix_core::{
     unicode::width::UnicodeWidthStr,
     visual_offset_from_block, Change, Position, Range, Selection, Transaction,
 };
+use helix_stdx::rope::RopeSliceExt;
 use helix_view::{
     document::{Mode, SavePoint, SCRATCH_BUFFER_NAME},
     editor::{CompleteAction, CursorShapeConfig},
@@ -386,8 +387,8 @@ impl EditorView {
         let mut spans = syntax.rainbow_spans(text, Some(syntax_node_range), theme.rainbow_length());
 
         for (_highlight, range) in spans.iter_mut() {
-            let start = text.byte_to_char(range.start);
-            let end = text.byte_to_char(range.end);
+            let start = range.start;
+            let end = range.end;
 
             *range = start..end;
         }
