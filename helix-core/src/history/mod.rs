@@ -3,7 +3,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use std::num::NonZeroUsize;
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime};
 
 pub mod format;
 
@@ -65,7 +65,8 @@ struct Revision {
     // We need an inversion for undos because delete transactions don't store
     // the deleted text.
     inversion: Arc<Transaction>,
-    timestamp: Instant,
+    // TODO: Probably need to change to chrono for timezone handling
+    timestamp: SystemTime,
 }
 
 impl PartialEq for Revision {
@@ -86,7 +87,7 @@ impl Default for History {
                 last_child: None,
                 transaction: Arc::new(Transaction::from(ChangeSet::new("".into()))),
                 inversion: Arc::new(Transaction::from(ChangeSet::new("".into()))),
-                timestamp: Instant::now(),
+                timestamp: SystemTime::now(),
             }],
             current: 0,
         }
@@ -95,14 +96,14 @@ impl Default for History {
 
 impl History {
     pub fn commit_revision(&mut self, transaction: &Transaction, original: &State) {
-        self.commit_revision_at_timestamp(transaction, original, Instant::now());
+        self.commit_revision_at_timestamp(transaction, original, SystemTime::now());
     }
 
     pub fn commit_revision_at_timestamp(
         &mut self,
         transaction: &Transaction,
         original: &State,
-        timestamp: Instant,
+        timestamp: SystemTime,
     ) {
         let inversion = Arc::new(
             transaction
@@ -256,10 +257,17 @@ impl History {
     }
 
     /// Helper for a binary search case below.
-    fn revision_closer_to_instant(&self, i: usize, instant: Instant) -> usize {
-        let dur_im1 = instant.duration_since(self.revisions[i - 1].timestamp);
-        let dur_i = self.revisions[i].timestamp.duration_since(instant);
+    fn revision_closer_to_timestamp(&self, i: usize, timestamp: SystemTime) -> usize {
+        // TODO: Confused by nvim's impl since it seems to disregard system clock changes
+        let dur_im1 = timestamp
+            .duration_since(self.revisions[i - 1].timestamp)
+            .unwrap_or_else(|e| e.duration());
+        let dur_i = self.revisions[i]
+            .timestamp
+            .duration_since(timestamp)
+            .unwrap_or_else(|e| e.duration());
         use std::cmp::Ordering::*;
+
         match dur_im1.cmp(&dur_i) {
             Less => i - 1,
             Equal | Greater => i,
@@ -267,17 +275,17 @@ impl History {
     }
 
     /// Creates a [`Transaction`] that will match a revision created at around
-    /// `instant`.
-    fn jump_instant(&mut self, instant: Instant) -> Vec<Transaction> {
+    /// `time`.
+    fn jump_timestamp(&mut self, time: SystemTime) -> Vec<Transaction> {
         let search_result = self
             .revisions
-            .binary_search_by(|rev| rev.timestamp.cmp(&instant));
+            .binary_search_by(|rev| rev.timestamp.cmp(&time));
         let revision = match search_result {
             Ok(revision) => revision,
             Err(insert_point) => match insert_point {
                 0 => 0,
                 n if n == self.revisions.len() => n - 1,
-                i => self.revision_closer_to_instant(i, instant),
+                i => self.revision_closer_to_timestamp(i, time),
             },
         };
         self.jump_to(revision)
@@ -287,7 +295,7 @@ impl History {
     /// from the timestamp of current revision.
     fn jump_duration_backward(&mut self, duration: Duration) -> Vec<Transaction> {
         match self.revisions[self.current].timestamp.checked_sub(duration) {
-            Some(instant) => self.jump_instant(instant),
+            Some(instant) => self.jump_timestamp(instant),
             None => self.jump_to(0),
         }
     }
@@ -296,7 +304,7 @@ impl History {
     /// the future from the timestamp of the current revision.
     fn jump_duration_forward(&mut self, duration: Duration) -> Vec<Transaction> {
         match self.revisions[self.current].timestamp.checked_add(duration) {
-            Some(instant) => self.jump_instant(instant),
+            Some(time) => self.jump_timestamp(time),
             None => self.jump_to(self.revisions.len() - 1),
         }
     }
@@ -492,14 +500,14 @@ mod test {
             history: &mut History,
             state: &mut State,
             change: crate::transaction::Change,
-            instant: Instant,
+            time: SystemTime,
         ) {
             let txn = Transaction::change(&state.doc, vec![change].into_iter());
-            history.commit_revision_at_timestamp(&txn, state, instant);
+            history.commit_revision_at_timestamp(&txn, state, time);
             txn.apply(&mut state.doc);
         }
 
-        let t0 = Instant::now();
+        let t0 = SystemTime::now();
         let t = |n| t0.checked_add(Duration::from_secs(n)).unwrap();
 
         commit_change(&mut history, &mut state, (1, 1, Some(" b".into())), t(0));
