@@ -63,8 +63,8 @@ impl Assoc {
 pub struct ChangeSet {
     pub(crate) changes: Vec<Operation>,
     /// The required document length. Will refuse to apply changes unless it matches.
-    len: usize,
-    len_after: usize,
+    pub(crate) len: usize,
+    pub(crate) len_after: usize,
 }
 
 impl ChangeSet {
@@ -519,8 +519,8 @@ impl ChangeSet {
 /// a single transaction.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Transaction {
-    changes: ChangeSet,
-    selection: Option<Selection>,
+    pub(crate) changes: ChangeSet,
+    pub(crate) selection: Option<Selection>,
 }
 
 impl Transaction {

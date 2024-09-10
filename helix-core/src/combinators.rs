@@ -1,8 +1,4 @@
-use std::io::Error;
-use std::io::ErrorKind;
-use std::io::Read;
-use std::io::Result;
-use std::io::Write;
+use std::io::{Error, ErrorKind, Read, Result, Write};
 
 pub fn write_byte<W: Write>(writer: &mut W, byte: u8) -> Result<()> {
     writer.write_all(&[byte])

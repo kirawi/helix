@@ -5,6 +5,7 @@ use std::num::NonZeroUsize;
 use std::sync::Arc;
 use std::time::{Duration, Instant, SystemTime};
 
+pub mod error;
 pub mod format;
 
 #[derive(Debug, Clone)]
@@ -50,7 +51,7 @@ pub struct State {
 ///    delete, we also store an inversion of the transaction.
 ///
 /// Using time to navigate the history: <https://github.com/helix-editor/helix/pull/194>
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct History {
     revisions: Vec<Revision>,
     current: usize,
