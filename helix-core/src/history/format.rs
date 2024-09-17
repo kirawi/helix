@@ -154,29 +154,6 @@ const UNDO_FILE_HEADER_TAG: &[u8] = b"Helix";
 const UNDO_FILE_HEADER_LEN: usize = UNDO_FILE_HEADER_TAG.len();
 const UNDO_FILE_VERSION: u8 = 1;
 
-fn is_valid<R: Read>(reader: &mut R, path: &Path) -> bool {
-    read_header(reader, path).is_ok()
-}
-
-fn read_header<R: Read>(reader: &mut R, path: &Path) -> Result<(usize, usize), StateError> {
-    let header: [u8; UNDO_FILE_HEADER_LEN] = read_many_bytes(reader)?;
-    let version = read_byte(reader)?;
-    if header != UNDO_FILE_HEADER_TAG || version != UNDO_FILE_VERSION {
-        Err(StateError::InvalidHeader)
-    } else {
-        let current = read_usize(reader)?;
-        let last_saved_revision = read_usize(reader)?;
-        let mut hash = [0u8; HASH_DIGEST_LENGTH];
-        reader.read_exact(&mut hash)?;
-
-        if hash != get_hash(&mut std::fs::File::open(path)?)? {
-            return Err(StateError::Outdated);
-        }
-
-        Ok((current, last_saved_revision))
-    }
-}
-
 impl History {
     /// It is the responsibility of the caller to ensure the undofile is valid before serializing.
     /// This function performs no checks.

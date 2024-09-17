@@ -1,9 +1,10 @@
 use crate::{Assoc, ChangeSet, Range, Rope, Selection, Transaction};
+use chrono::{DateTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::num::NonZeroUsize;
 use std::sync::Arc;
-use std::time::{Duration, Instant, SystemTime};
+use std::time::{Duration, SystemTime};
 
 pub mod error;
 pub mod format;
@@ -67,7 +68,7 @@ struct Revision {
     // the deleted text.
     inversion: Arc<Transaction>,
     // TODO: Probably need to change to chrono for timezone handling
-    timestamp: SystemTime,
+    timestamp: DateTime<Utc>,
 }
 
 impl PartialEq for Revision {
@@ -88,7 +89,7 @@ impl Default for History {
                 last_child: None,
                 transaction: Arc::new(Transaction::from(ChangeSet::new("".into()))),
                 inversion: Arc::new(Transaction::from(ChangeSet::new("".into()))),
-                timestamp: SystemTime::now(),
+                timestamp: Utc::now(),
             }],
             current: 0,
         }
@@ -97,14 +98,14 @@ impl Default for History {
 
 impl History {
     pub fn commit_revision(&mut self, transaction: &Transaction, original: &State) {
-        self.commit_revision_at_timestamp(transaction, original, SystemTime::now());
+        self.commit_revision_at_timestamp(transaction, original, Utc::now());
     }
 
     pub fn commit_revision_at_timestamp(
         &mut self,
         transaction: &Transaction,
         original: &State,
-        timestamp: SystemTime,
+        timestamp: DateTime<Utc>,
     ) {
         let inversion = Arc::new(
             transaction

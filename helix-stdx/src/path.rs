@@ -239,6 +239,7 @@ pub fn escape_path(path: &Path) -> PathBuf {
     }
     path_from_bytes(&bytes).unwrap()
 }
+
 #[cfg(test)]
 mod tests {
     use std::{
