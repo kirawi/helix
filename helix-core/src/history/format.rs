@@ -120,16 +120,7 @@ impl Revision {
         write_usize(writer, self.parent)?;
         self.transaction.serialize(writer)?;
         self.inversion.serialize(writer)?;
-        write_u64(
-            writer,
-            self.timestamp
-                .duration_since(std::time::UNIX_EPOCH)
-                .map_err(|_| {
-                    StateError::InvalidData("Timestamp is earlier than unix epoch".to_string())
-                })?
-                .as_secs(),
-        )?;
-
+        write_time(writer, self.timestamp)?;
         Ok(())
     }
 
@@ -137,9 +128,7 @@ impl Revision {
         let parent = read_usize(reader)?;
         let transaction = Arc::new(Transaction::deserialize(reader)?);
         let inversion = Arc::new(Transaction::deserialize(reader)?);
-        let timestamp = std::time::UNIX_EPOCH
-            .checked_add(Duration::from_secs(read_u64(reader)?))
-            .unwrap_or_else(SystemTime::now);
+        let timestamp = read_time(reader)?;
         Ok(Revision {
             parent,
             last_child: None,
@@ -161,7 +150,9 @@ impl History {
         &self,
         writer: &mut W,
         path: &Path,
+        // the revision that will become the last_saved_revision after the write
         revision: usize,
+        // The offset after which to append new revisions
         last_saved_revision: usize,
     ) -> Result<(), StateError> {
         // Header
@@ -169,6 +160,7 @@ impl History {
         write_byte(writer, UNDO_FILE_VERSION)?;
         write_usize(writer, self.current)?;
         write_usize(writer, revision)?;
+        write_time(writer, SystemTime::now())?;
         writer.write_all(&get_hash(&mut std::fs::File::open(path)?)?)?;
 
         // Append new revisions to the end of the file.
@@ -183,8 +175,11 @@ impl History {
     }
 
     /// Returns the deserialized [`History`] and the last_saved_revision.
-    pub fn deserialize<R: Read>(reader: &mut R, path: &Path) -> Result<(usize, Self), StateError> {
-        let (current, last_saved_revision) = Self::read_header(reader, path)?;
+    pub fn deserialize<R: Read>(
+        reader: &mut R,
+        path: &Path,
+    ) -> Result<(usize, SystemTime, Self), StateError> {
+        let (current, last_saved_timestamp, last_saved_revision) = Self::read_header(reader, path)?;
 
         // Read the revisions and construct the tree.
         let len = read_usize(reader)?;
@@ -214,7 +209,7 @@ impl History {
         }
 
         let history = History { current, revisions };
-        Ok((last_saved_revision, history))
+        Ok((last_saved_revision, last_saved_timestamp, history))
     }
 
     /// If `self.revisions = [A, B, C, D]` and `other.revisions = `[A, B, E, F]`, then
@@ -267,7 +262,10 @@ impl History {
         Self::read_header(reader, path).is_ok()
     }
 
-    pub fn read_header<R: Read>(reader: &mut R, path: &Path) -> Result<(usize, usize), StateError> {
+    pub fn read_header<R: Read>(
+        reader: &mut R,
+        path: &Path,
+    ) -> Result<(usize, SystemTime, usize), StateError> {
         let header: [u8; UNDO_FILE_HEADER_LEN] = read_many_bytes(reader)?;
         let version = read_byte(reader)?;
         if header != UNDO_FILE_HEADER_TAG || version != UNDO_FILE_VERSION {
@@ -275,6 +273,7 @@ impl History {
         } else {
             let current = read_usize(reader)?;
             let last_saved_revision = read_usize(reader)?;
+            let last_saved_time = read_time(reader)?;
             let mut hash = [0u8; HASH_DIGEST_LENGTH];
             reader.read_exact(&mut hash)?;
 
@@ -282,7 +281,7 @@ impl History {
                 return Err(StateError::Outdated);
             }
 
-            Ok((current, last_saved_revision))
+            Ok((current, last_saved_time, last_saved_revision))
         }
     }
 }

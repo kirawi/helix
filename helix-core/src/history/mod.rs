@@ -1,5 +1,4 @@
 use crate::{Assoc, ChangeSet, Range, Rope, Selection, Transaction};
-use chrono::{DateTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::num::NonZeroUsize;
@@ -68,7 +67,7 @@ struct Revision {
     // the deleted text.
     inversion: Arc<Transaction>,
     // TODO: Probably need to change to chrono for timezone handling
-    timestamp: DateTime<Utc>,
+    timestamp: SystemTime,
 }
 
 impl PartialEq for Revision {
@@ -89,7 +88,7 @@ impl Default for History {
                 last_child: None,
                 transaction: Arc::new(Transaction::from(ChangeSet::new("".into()))),
                 inversion: Arc::new(Transaction::from(ChangeSet::new("".into()))),
-                timestamp: Utc::now(),
+                timestamp: SystemTime::now(),
             }],
             current: 0,
         }
@@ -98,14 +97,14 @@ impl Default for History {
 
 impl History {
     pub fn commit_revision(&mut self, transaction: &Transaction, original: &State) {
-        self.commit_revision_at_timestamp(transaction, original, Utc::now());
+        self.commit_revision_at_timestamp(transaction, original, SystemTime::now());
     }
 
     pub fn commit_revision_at_timestamp(
         &mut self,
         transaction: &Transaction,
         original: &State,
-        timestamp: DateTime<Utc>,
+        timestamp: SystemTime,
     ) {
         let inversion = Arc::new(
             transaction
@@ -327,6 +326,11 @@ impl History {
             Steps(n) => self.jump_forward(n),
             TimePeriod(d) => self.jump_duration_forward(d),
         }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        // 1 for the initial empty revision
+        self.revisions.len() > 1
     }
 }
 

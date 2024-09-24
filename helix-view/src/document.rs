@@ -720,6 +720,7 @@ impl Document {
             (Rope::from(line_ending.as_str()), encoding, false)
         };
 
+        let load_undofile = config.load().undofile;
         let mut doc = Self::from(rope, Some((encoding, has_bom)), config);
 
         // set the path and try detecting the language
@@ -731,6 +732,44 @@ impl Document {
         doc.detect_indent_and_line_ending();
 
         Ok(doc)
+    }
+
+    /// Returns the path to the undofile if the buffer points to a path
+    pub fn get_undofile_path(&self) -> anyhow::Result<Option<PathBuf>> {
+        // TODO: Move this function out, along with the creation of the directory
+        let undofile_dir = helix_loader::cache_dir().join("undo");
+        std::fs::create_dir_all(&undofile_dir)?;
+
+        let res = self.path().map(|path| {
+            let escaped_path = helix_stdx::path::escape_path(path);
+            undofile_dir.join(escaped_path)
+        });
+        Ok(res)
+    }
+
+    /// Deserialize the associate undofile and update the history. See the `history::format` module
+    /// for documentation on merge behavior.
+    pub fn load_undofile(&mut self) -> anyhow::Result<()> {
+        if let Some(mut undo_file) = self
+            .get_undofile_path()?
+            .and_then(|path| std::fs::File::open(path).ok())
+        {
+            if undo_file.metadata()?.len() != 0 {
+                let (last_saved_revision, last_saved_time, history) =
+                    helix_core::history::History::deserialize(
+                        &mut undo_file,
+                        self.path().unwrap(),
+                    )?;
+
+                if self.history.get_mut().is_empty() {
+                    self.history.set(history);
+                } else {
+                    self.history.get_mut().merge(history).unwrap();
+                    self.set_last_saved_revision(last_saved_revision, last_saved_time);
+                }
+            }
+        }
+        Ok(())
     }
 
     /// The same as [`format`], but only returns formatting changes if auto-formatting

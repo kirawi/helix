@@ -1,4 +1,7 @@
-use std::io::{Error, ErrorKind, Read, Result, Write};
+use std::{
+    io::{Error, ErrorKind, Read, Result, Write},
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 pub fn write_byte<W: Write>(writer: &mut W, byte: u8) -> Result<()> {
     writer.write_all(&[byte])
@@ -47,6 +50,19 @@ pub fn write_option<W: Write, T>(
         f(writer, value)?;
     }
     Ok(())
+}
+
+pub fn write_time<W: Write>(writer: &mut W, time: SystemTime) -> Result<()> {
+    let n = time
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| {
+            Error::new(
+                ErrorKind::InvalidData,
+                "Timestamp is earlier than unix epoch",
+            )
+        })?
+        .as_secs();
+    write_u64(writer, n)
 }
 
 pub fn read_byte<R: Read>(reader: &mut R) -> Result<u8> {
@@ -116,6 +132,14 @@ pub fn read_option<R: Read, T>(
     } else {
         None
     };
+    Ok(res)
+}
+
+pub fn read_time<R: Read>(reader: &mut R) -> Result<SystemTime> {
+    let n = read_u64(reader)?;
+    let res = UNIX_EPOCH
+        .checked_add(std::time::Duration::from_secs(n))
+        .ok_or_else(|| Error::new(ErrorKind::InvalidData, "Invalid timestamp"))?;
     Ok(res)
 }
 
