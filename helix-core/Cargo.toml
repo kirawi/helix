@@ -19,7 +19,7 @@ integration = []
 helix-stdx = { path = "../helix-stdx" }
 helix-loader = { path = "../helix-loader" }
 
-blake3 = "1.5"
+tenthash = "0.4"
 
 ropey = { version = "1.6.1", default-features = false, features = ["simd"] }
 smallvec = "1.13"

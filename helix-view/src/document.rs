@@ -755,17 +755,16 @@ impl Document {
             .and_then(|path| std::fs::File::open(path).ok())
         {
             if undo_file.metadata()?.len() != 0 {
-                let (last_saved_revision, last_saved_time, history) =
-                    helix_core::history::History::deserialize(
-                        &mut undo_file,
-                        self.path().unwrap(),
-                    )?;
+                let (last_saved_revision, history) = helix_core::history::History::deserialize(
+                    &mut undo_file,
+                    self.path().unwrap(),
+                )?;
 
                 if self.history.get_mut().is_empty() {
                     self.history.set(history);
                 } else {
                     self.history.get_mut().merge(history).unwrap();
-                    self.set_last_saved_revision(last_saved_revision, last_saved_time);
+                    self.set_last_saved_revision(last_saved_revision, SystemTime::now());
                 }
             }
         }
@@ -931,6 +930,17 @@ impl Document {
         let encoding_with_bom_info = (self.encoding, self.has_bom);
         let last_saved_time = self.last_saved_time;
 
+        let use_undofile = self.config.load().undofile;
+        // Since we can't call self methods in the async task, we fetch this here
+        // Cloning the history should be relatively cheap
+        let (history, uf_path) = if use_undofile {
+            let history = self.history.get_mut().clone();
+            let undofile_path = self.get_undofile_path()?.unwrap();
+            (Some(history), Some(undofile_path))
+        } else {
+            (None, None)
+        };
+
         // We encode the file according to the `Document`'s encoding.
         let future = async move {
             use tokio::fs;
@@ -973,6 +983,24 @@ impl Document {
                     "Path is read only"
                 ));
             }
+
+            // Load undofile first while it is valid
+            // This function will check that:
+            // - The undofile's hash matches the file's hash
+            let has_valid_undofile = if use_undofile {
+                let path_ = write_path.clone();
+                let uf_path_ = uf_path.clone();
+                tokio::task::spawn_blocking(move || -> anyhow::Result<bool> {
+                    Ok(helix_core::history::History::is_valid(
+                        &mut std::fs::File::open(uf_path_.unwrap())?,
+                        &path_,
+                    ))
+                })
+                .await?
+                .unwrap_or(false)
+            } else {
+                false
+            };
 
             // Assume it is a hardlink to prevent data loss if the metadata cant be read (e.g. on certain Windows configurations)
             let is_hardlink = helix_stdx::faccess::hardlink_count(&write_path).unwrap_or(2) > 1;
@@ -1056,6 +1084,46 @@ impl Document {
             }
 
             write_result?;
+
+            /*
+                The issue is that there is no way to verify that at this point the history of the document had diverged from a loaded undofile. This causes issues with the undofile history not being mapped correctly.
+                However, my intuition tells me that I would want to have a form of validation on both the document and the undofile ensuring that they correspond to the same iteration of the undofile. This could be a UUID, perhaps
+                Vim does not incrementally write undos
+                
+                Solution:
+                - Treat writing to the undofile as the same problem as writing to a file.
+                - We cannot assume that we were the last writer to the undofile
+                - Thus, we must store the mtime of the undofile too
+                - We must also load the undofile if it is dynamically set, merging it
+                - This will give us reasonable confidence that the undofile history matches the current document's history
+                - We could also move the hash reading to here, removing the need for `is_valid` call
+            */
+            let uf_write_res = if use_undofile {
+                let path_ = path.clone();
+                let uf_path_ = uf_path.clone().unwrap();
+
+                tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
+                    let mut uf = std::fs::OpenOptions::new()
+                        .write(true)
+                        .read(true)
+                        .create(true)
+                        .open(&uf_path_)?;
+
+                    let offset = if has_valid_undofile {
+                        last_saved_revision
+                    } else {
+                        uf.set_len(0)?;
+                        0
+                    };
+                    history
+                        .unwrap()
+                        .serialize(&mut uf, &path_, current_rev, offset)?;
+                    copy_metadata(&path_, &uf_path_)?;
+                    Ok(())
+                })
+                .await?
+            } else {
+                Ok(())            }
 
             let event = DocumentSavedEvent {
                 revision: current_rev,

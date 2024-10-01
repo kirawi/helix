@@ -9,11 +9,21 @@ use std::{
 use super::{error::StateError, History, Revision};
 use crate::{combinators::*, ChangeSet, Operation, Range, Selection, Transaction};
 
-const HASH_DIGEST_LENGTH: usize = blake3::OUT_LEN;
+const HASH_DIGEST_LENGTH: usize = 20;
 fn get_hash<R: Read>(reader: &mut R) -> io::Result<[u8; HASH_DIGEST_LENGTH]> {
-    let mut hasher = blake3::Hasher::new();
-    hasher.update_reader(reader)?;
-    Ok(hasher.finalize().as_bytes().to_owned())
+    let mut hasher = tenthash::TentHasher::new();
+    let mut buf = [0u8; 8192];
+
+    // Read until empty
+    loop {
+        let n = reader.read(&mut buf)?;
+        if n == 0 {
+            break;
+        }
+        hasher.update(&buf[..n]);
+    }
+
+    Ok(hasher.finalize())
 }
 
 impl Selection {
@@ -151,7 +161,6 @@ impl History {
     //     - UNDO_FILE_HEADER_TAG
     //     - UNDO_FILE_VERSION
     //     - Current revision at time of write
-    //     - Current time
     //     - Hash of the file
     // - Revisions contiguously
     pub fn serialize<W: Write + Seek>(
@@ -164,8 +173,9 @@ impl History {
         // Header
         writer.write_all(UNDO_FILE_HEADER_TAG)?;
         write_byte(writer, UNDO_FILE_VERSION)?;
+
+        // We save the current revision so that we reload at that revision later
         write_usize(writer, self.current)?;
-        write_time(writer, SystemTime::now())?;
         writer.write_all(&get_hash(&mut std::fs::File::open(path)?)?)?;
 
         // Append new revisions to the end of the file.
@@ -183,11 +193,8 @@ impl History {
     // Deserializes:
     // - Header
     // - Revisions
-    pub fn deserialize<R: Read>(
-        reader: &mut R,
-        path: &Path,
-    ) -> Result<(usize, SystemTime, Self), StateError> {
-        let (current, last_saved_timestamp) = Self::read_header(reader, path)?;
+    pub fn deserialize<R: Read>(reader: &mut R, path: &Path) -> Result<(usize, Self), StateError> {
+        let current = Self::read_header(reader, path)?;
 
         // Read the revisions and construct the tree.
         let len = read_usize(reader)?;
@@ -219,7 +226,7 @@ impl History {
         }
 
         let history = History { current, revisions };
-        Ok((current, last_saved_timestamp, history))
+        Ok((current, history))
     }
 
     /// If `self.revisions = [A, B, C, D]` and `other.revisions = `[A, B, E, F]`, then
@@ -276,19 +283,14 @@ impl History {
     // - Checks for UNDO_FILE_HEADER
     // - Validates UNDO_FILE_VERSION
     // - Current revision
-    // - System time
     // - Validates hash
-    pub fn read_header<R: Read>(
-        reader: &mut R,
-        path: &Path,
-    ) -> Result<(usize, SystemTime), StateError> {
+    pub fn read_header<R: Read>(reader: &mut R, path: &Path) -> Result<usize, StateError> {
         let header: [u8; UNDO_FILE_HEADER_LEN] = read_many_bytes(reader)?;
         let version = read_byte(reader)?;
         if header != UNDO_FILE_HEADER_TAG || version != UNDO_FILE_VERSION {
             Err(StateError::InvalidHeader)
         } else {
             let current = read_usize(reader)?;
-            let last_saved_time = read_time(reader)?;
             let mut hash = [0u8; HASH_DIGEST_LENGTH];
             reader.read_exact(&mut hash)?;
 
@@ -296,7 +298,7 @@ impl History {
                 return Err(StateError::Outdated);
             }
 
-            Ok((current, last_saved_time))
+            Ok(current)
         }
     }
 }
