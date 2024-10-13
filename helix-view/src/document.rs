@@ -735,15 +735,13 @@ impl Document {
     }
 
     /// Returns the path to the undofile if the buffer points to a path
-    pub fn get_undofile_path(&self) -> anyhow::Result<Option<PathBuf>> {
+    pub fn get_undofile_path(&self, path: &Path) -> anyhow::Result<PathBuf> {
         // TODO: Move this function out, along with the creation of the directory
         let undofile_dir = helix_loader::cache_dir().join("undo");
         std::fs::create_dir_all(&undofile_dir)?;
 
-        let res = self.path().map(|path| {
-            let escaped_path = helix_stdx::path::escape_path(path);
-            undofile_dir.join(escaped_path)
-        });
+        let escaped_path = helix_stdx::path::escape_path(path);
+        let res = undofile_dir.join(escaped_path);
         Ok(res)
     }
 
@@ -751,7 +749,7 @@ impl Document {
     /// for documentation on merge behavior.
     pub fn load_undofile(&mut self) -> anyhow::Result<()> {
         if let Some(mut undo_file) = self
-            .get_undofile_path()?
+            .get_undofile_path()
             .and_then(|path| std::fs::File::open(path).ok())
         {
             if undo_file.metadata()?.len() != 0 {
@@ -891,6 +889,31 @@ impl Document {
         // futures_util::future::Ready<_>,
     }
 
+    // TODO: Use async
+    fn save_undofile(&mut self, path: &Path, force: bool) -> anyhow::Result<()> {
+        /*
+            - Look for the undofile path
+            - Verify if the undofile is valid
+            - If it is valid, check if there is a version mismatch between the client and the undofile
+            - If there is a version mismatch, do not save (including the buffer) unless force is true. If force is true, then the undofile is overwritten
+
+            - Versions will be encoded via an incrementing usize corresponding to the write number
+        */
+        let undofile_path = self.get_undofile_path(path)?;
+        if !undofile_path.exists() {
+            let undofile = std::fs::File::create_new(undofile_path)?;
+            // Write
+        } else {
+            // I feel like there was an issue with this pattern before...
+            let undofile = std::fs::OpenOptions::new()
+                .read(true)
+                .append(true)
+                .open(undofile_path)?;
+        }
+
+        Ok(())
+    }
+
     /// The `Document`'s text is encoded according to its encoding and written to the file located
     /// at its `path()`.
     fn save_impl(
@@ -935,7 +958,7 @@ impl Document {
         // Cloning the history should be relatively cheap
         let (history, uf_path) = if use_undofile {
             let history = self.history.get_mut().clone();
-            let undofile_path = self.get_undofile_path()?.unwrap();
+            let undofile_path = self.get_undofile_path()?;
             (Some(history), Some(undofile_path))
         } else {
             (None, None)
@@ -1089,7 +1112,7 @@ impl Document {
                 The issue is that there is no way to verify that at this point the history of the document had diverged from a loaded undofile. This causes issues with the undofile history not being mapped correctly.
                 However, my intuition tells me that I would want to have a form of validation on both the document and the undofile ensuring that they correspond to the same iteration of the undofile. This could be a UUID, perhaps
                 Vim does not incrementally write undos
-                
+
                 Solution:
                 - Treat writing to the undofile as the same problem as writing to a file.
                 - We cannot assume that we were the last writer to the undofile
@@ -1123,7 +1146,8 @@ impl Document {
                 })
                 .await?
             } else {
-                Ok(())            }
+                Ok(())
+            };
 
             let event = DocumentSavedEvent {
                 revision: current_rev,

@@ -1,12 +1,13 @@
+use crate::combinators::*;
+use crate::hash::{Digest, HASH_DIGEST_LENGTH};
 use crate::{Assoc, ChangeSet, Range, Rope, Selection, Transaction};
 use once_cell::sync::Lazy;
 use regex::Regex;
+use std::io::{self, Read, Seek, SeekFrom, Write};
 use std::num::NonZeroUsize;
+use std::path::Path;
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
-
-pub mod error;
-pub mod format;
 
 #[derive(Debug, Clone)]
 pub struct State {
@@ -53,20 +54,20 @@ pub struct State {
 /// Using time to navigate the history: <https://github.com/helix-editor/helix/pull/194>
 #[derive(Debug, Clone)]
 pub struct History {
+    pub(crate) undofile_parent: Option<(usize, Digest)>,
     revisions: Vec<Revision>,
     current: usize,
 }
 
 /// A single point in history. See [History] for more information.
 #[derive(Debug, Clone)]
-struct Revision {
+pub(crate) struct Revision {
     parent: usize,
     last_child: Option<NonZeroUsize>,
     transaction: Arc<Transaction>,
     // We need an inversion for undos because delete transactions don't store
     // the deleted text.
     inversion: Arc<Transaction>,
-    // TODO: Probably need to change to chrono for timezone handling
     timestamp: SystemTime,
 }
 
@@ -79,10 +80,36 @@ impl PartialEq for Revision {
     }
 }
 
+// Serializable impl
+impl Revision {
+    fn serialize<W: Write>(&self, writer: &mut W) -> io::Result<()> {
+        write_usize(writer, self.parent)?;
+        self.transaction.serialize(writer)?;
+        self.inversion.serialize(writer)?;
+        write_time(writer, self.timestamp)?;
+        Ok(())
+    }
+
+    fn deserialize<R: Read>(reader: &mut R) -> io::Result<Self> {
+        let parent = read_usize(reader)?;
+        let transaction = Arc::new(Transaction::deserialize(reader)?);
+        let inversion = Arc::new(Transaction::deserialize(reader)?);
+        let timestamp = read_time(reader)?;
+        Ok(Revision {
+            parent,
+            last_child: None,
+            transaction,
+            inversion,
+            timestamp,
+        })
+    }
+}
+
 impl Default for History {
     fn default() -> Self {
         // Add a dummy root revision with empty transaction
         Self {
+            undofile_parent: None,
             revisions: vec![Revision {
                 parent: 0,
                 last_child: None,
@@ -133,6 +160,10 @@ impl History {
     #[inline]
     pub const fn at_root(&self) -> bool {
         self.current == 0
+    }
+
+    pub fn get_revisions(&self) -> &[Revision] {
+        &self.revisions
     }
 
     /// Returns the changes since the given revision composed into a transaction.
@@ -331,6 +362,196 @@ impl History {
     pub fn is_empty(&self) -> bool {
         // 1 for the initial empty revision
         self.revisions.len() > 1
+    }
+}
+
+// Serializable impl
+const UNDO_FILE_HEADER_TAG: &[u8] = b"Helix";
+const UNDO_FILE_HEADER_LEN: usize = UNDO_FILE_HEADER_TAG.len();
+const UNDO_FILE_VERSION: u8 = 1;
+
+#[derive(Debug)]
+pub enum StateError {
+    Outdated,
+    InvalidHeader,
+    InvalidOffset,
+    InvalidData(String),
+    InvalidHash,
+    Io(std::io::Error),
+}
+
+impl std::fmt::Display for StateError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Outdated => f.write_str("Outdated file"),
+            Self::InvalidHeader => f.write_str("Invalid undofile header"),
+            Self::InvalidOffset => f.write_str("Invalid merge offset"),
+            Self::InvalidData(msg) => f.write_str(msg),
+            Self::InvalidHash => f.write_str("invalid hash for undofile itself"),
+            Self::Io(e) => e.fmt(f),
+        }
+    }
+}
+
+impl std::error::Error for StateError {}
+
+impl From<std::io::Error> for StateError {
+    fn from(value: std::io::Error) -> Self {
+        Self::Io(value)
+    }
+}
+
+impl History {
+    /// It is the responsibility of the caller to ensure the undofile is valid before serializing.
+    /// This function performs no checks.
+    // Serializes:
+    // - Header:
+    //     - UNDO_FILE_HEADER_TAG
+    //     - UNDO_FILE_VERSION
+    //     - Current revision at time of write
+    //     - Hash of the file
+    // - Revisions contiguously
+    pub fn serialize<W: Write + Seek>(
+        &self,
+        writer: &mut W,
+        // The offset after which to append new revisions
+        offset: usize,
+        // Hash of the file
+        hash: [u8; HASH_DIGEST_LENGTH],
+    ) -> Result<(), StateError> {
+        // Header
+        writer.write_all(UNDO_FILE_HEADER_TAG)?;
+        write_byte(writer, UNDO_FILE_VERSION)?;
+
+        // We save the current revision so that we reload at that revision later
+        write_usize(writer, self.current)?;
+        writer.write_all(&hash)?;
+
+        // Append new revisions to the end of the file.
+        write_usize(writer, self.revisions.len())?;
+        writer.seek(SeekFrom::End(0))?;
+        for rev in &self.revisions[offset..] {
+            rev.serialize(writer)?;
+        }
+
+        writer.flush()?;
+        Ok(())
+    }
+
+    /// Returns the deserialized [`History`] and the last_saved_revision.
+    // Deserializes:
+    // - Header
+    // - Revisions
+    pub fn deserialize<R: Read>(reader: &mut R, path: &Path) -> Result<(usize, Self), StateError> {
+        let current = Self::read_header(reader, path)?;
+
+        // Read the revisions and construct the tree.
+        let len = read_usize(reader)?;
+        let mut revisions: Vec<Revision> = Vec::with_capacity(len);
+        for _ in 0..len {
+            let rev = Revision::deserialize(reader)?;
+            let len = revisions.len();
+
+            // Check that order of revisions is correct before inserting
+            match revisions.get_mut(rev.parent) {
+                Some(r) => r.last_child = NonZeroUsize::new(len),
+                None if len != 0 => {
+                    return Err(StateError::InvalidData(format!(
+                        "non-contiguous history: {} >= {}",
+                        rev.parent, len
+                    )));
+                }
+                None => {
+                    // Starting revision check
+                    let default_rev = History::default().revisions.pop().unwrap();
+                    if rev != default_rev {
+                        return Err(StateError::InvalidData(String::from(
+                            "Missing 0th revision",
+                        )));
+                    }
+                }
+            }
+            revisions.push(rev);
+        }
+
+        let history = History { current, revisions };
+        Ok((current, history))
+    }
+
+    /// If `self.revisions = [A, B, C, D]` and `other.revisions = `[A, B, E, F]`, then
+    /// they are merged into `[A, B, E, F, C, D]` where the tree can be represented as:
+    /// ```md
+    /// A -> B -> C -> D
+    ///       \  
+    ///        E -> F
+    /// ```
+    pub fn merge(&mut self, mut other: History) -> Result<(), StateError> {
+        let n = self
+            .revisions
+            .iter()
+            .zip(other.revisions.iter())
+            .take_while(|(a, b)| {
+                a.parent == b.parent && a.transaction == b.transaction && a.inversion == b.inversion
+            })
+            .count();
+
+        let new_revs = self.revisions.split_off(n);
+        if new_revs.is_empty() {
+            return Ok(());
+        }
+        other.revisions.reserve_exact(n);
+
+        // Only unique revisions in `self` matter, so saturating_sub(1) is sound as it going to 0 means there are no new revisions in the other history that aren't in `self`
+        let offset = (other.revisions.len() - n).saturating_sub(1);
+        for mut r in new_revs {
+            // Update parents of new revisions
+            if r.parent >= n {
+                r.parent += offset;
+            }
+            debug_assert!(r.parent < other.revisions.len());
+
+            // Update the corresponding parent.
+            other.revisions.get_mut(r.parent).unwrap().last_child =
+                NonZeroUsize::new(other.revisions.len());
+            other.revisions.push(r);
+        }
+
+        if self.current >= n {
+            self.current += offset;
+        }
+        self.revisions = other.revisions;
+
+        Ok(())
+    }
+
+    // pub fn is_valid<R: Read>(reader: &mut R, path: &Path) -> bool {
+    //     Self::read_header(reader, path).is_ok()
+    // }
+
+    // Deserializes:
+    // - Checks for UNDO_FILE_HEADER
+    // - Validates UNDO_FILE_VERSION
+    // - Current revision
+    // - Validates hash
+    pub fn read_header<R: Read>(
+        reader: &mut R,
+        current_hash: &Digest,
+    ) -> Result<usize, StateError> {
+        let header: [u8; UNDO_FILE_HEADER_LEN] = read_many_bytes(reader)?;
+        let version = read_byte(reader)?;
+        if header != UNDO_FILE_HEADER_TAG || version != UNDO_FILE_VERSION {
+            Err(StateError::InvalidHeader)
+        } else {
+            let current = read_usize(reader)?;
+            let mut hash = [0u8; HASH_DIGEST_LENGTH];
+            reader.read_exact(&mut hash)?;
+
+            if hash != *current_hash {
+                return Err(StateError::Outdated);
+            }
+
+            Ok(current)
+        }
     }
 }
 

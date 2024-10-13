@@ -10,6 +10,7 @@ pub mod diff;
 pub mod doc_formatter;
 pub mod fuzzy;
 pub mod graphemes;
+pub mod hash;
 pub mod history;
 pub mod increment;
 pub mod indent;
@@ -28,6 +29,7 @@ pub mod test;
 pub mod text_annotations;
 pub mod textobject;
 mod transaction;
+pub mod undofile;
 pub mod uri;
 pub mod wrap;
 
