@@ -1,4 +1,8 @@
-use std::io::{Seek, Write};
+use std::{
+    fs::File,
+    io::{Seek, Write},
+    time::SystemTime,
+};
 
 use crate::{
     hash::Digest,
@@ -22,12 +26,13 @@ use crate::{
 ///                             \
 ///                              B2a[hash7]
 /// ```
-pub struct UndoFile {
+pub struct UndoStorage {
+    pub timestamp: SystemTime,
     // Current is always most recent (last)
-    pub nodes: Vec<UndoFileNode>,
+    pub nodes: Vec<UndoStorageNode>,
 }
 
-pub struct UndoFileNode {
+pub struct UndoStorageNode {
     // Hash of file
     pub hash: Digest,
     // Needed to disambiguate order, e.g. if one client older than the undofile writes its changes
@@ -42,7 +47,36 @@ pub struct UndoStateDiff {
     current: usize,
 }
 
-impl UndoFile {
+/// A map to each Node based on offsets in the format
+/// Excludes revisions for memory savings
+// TODO: All clients maintain this
+// Required for merging by diffing this against the UndoStorage
+pub struct UndoMap {
+    pub timestamp: SystemTime,
+    pub nodes: Vec<UndoMapNode>,
+}
+
+pub struct UndoMapNode {
+    /// Hash of file
+    pub hash: Digest,
+    /// Parent node
+    pub parent: Option<usize>,
+    /// Number of revisions
+    pub changes: usize,
+}
+
+// Interface for serializing/deserializing into storage or map,etc.
+pub struct UndoStorageHandle<'a> {
+    map: &'a UndoMap,
+    file: File,
+}
+
+/*
+    - This should work without needing to load the entire undofile into memory
+    - The UndoFile will be an interface singleton on all clients. It will help to merge client histories too. It will store the parent hash/idx too.
+*/
+impl UndoMap {
+    // TODO: Add fast path when undofile state is unchanged. Maybe a UUID?
     // TODO: Make panic-free
     pub fn commit(&mut self, history: &History, file_hash: Digest) {
         // First, I need to construct the diff
@@ -69,7 +103,7 @@ impl UndoFile {
                 revisions,
                 current: history.current_revision(),
             };
-            self.nodes.push(UndoFileNode {
+            self.nodes.push(UndoStorageNode {
                 hash: file_hash,
                 parent: Some(self.nodes.len() - 1),
                 diff,
@@ -79,7 +113,7 @@ impl UndoFile {
                 revisions: history.get_revisions().to_vec(),
                 current: history.current_revision(),
             };
-            self.nodes.push(UndoFileNode {
+            self.nodes.push(UndoStorageNode {
                 hash: file_hash,
                 parent: None,
                 diff,
@@ -89,6 +123,6 @@ impl UndoFile {
 }
 
 // Serializable impl
-impl UndoFile {
+impl UndoStorage {
     pub fn serialize<W: Write + Seek>(&self, writer: &mut W) {}
 }

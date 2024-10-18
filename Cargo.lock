@@ -482,6 +482,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "fs4"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec6fcfb3c0c1d71612528825042261419d5dade9678c39a781e05b63677d9b32"
+dependencies = [
+ "rustix",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
 name = "futures-core"
 version = "0.3.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1285,6 +1295,7 @@ dependencies = [
  "dunce",
  "encoding_rs",
  "etcetera",
+ "fs4",
  "globset",
  "hashbrown 0.14.5",
  "helix-loader",
