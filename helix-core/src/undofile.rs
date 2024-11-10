@@ -34,6 +34,7 @@ pub struct UndoStorage {
 
 pub struct UndoStorageNode {
     // Hash of file
+    // Used to check if a client is actually using the correct undofile
     pub hash: Digest,
     // Needed to disambiguate order, e.g. if one client older than the undofile writes its changes
     pub parent: Option<usize>,

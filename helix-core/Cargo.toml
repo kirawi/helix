@@ -20,6 +20,7 @@ helix-stdx = { path = "../helix-stdx" }
 helix-loader = { path = "../helix-loader" }
 
 tenthash = "0.4"
+rusqlite = "0.32.1"
 
 ropey = { version = "1.6.1", default-features = false, features = ["simd"] }
 smallvec = "1.13"
